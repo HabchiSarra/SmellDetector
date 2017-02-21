@@ -5,11 +5,11 @@ import entities.PaprikaMethod;
 import entities.PaprikaModifiers;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
-import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.visitor.filter.TypeFilter;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,6 +35,14 @@ public class MethodProcessor extends AbstractProcessor<CtMethod> {
              position++;
         }
         paprikaMethod.setNumberOfLines(ctMethod.getPosition().getSourceEnd()-ctMethod.getPosition().getSourceStart());
+        MainProcessor.currentMethod=paprikaMethod;
+        handleUsedVariables(ctMethod,paprikaMethod);
+        handleInvocations(ctMethod,paprikaMethod);
+        paprikaMethod.setComplexity(getComplexity(ctMethod));
+
+    }
+
+    private void handleUsedVariables(CtMethod ctMethod, PaprikaMethod paprikaMethod){
         List<CtFieldAccess> elements = ctMethod.getElements(new TypeFilter<CtFieldAccess>(CtFieldAccess.class));
         String variableTarget =null;
         String variableName;
@@ -46,6 +54,10 @@ public class MethodProcessor extends AbstractProcessor<CtMethod> {
             variableName=ctFieldAccess.getVariable().getSimpleName();
             paprikaMethod.getUsedVariablesData().add(new VariableData(variableTarget, variableName));
         }
+
+    }
+
+    private void handleInvocations(CtMethod ctMethod, PaprikaMethod paprikaMethod){
         String targetName =null;
         String executable;
         List<CtInvocation> invocations = ctMethod.getElements(new TypeFilter<CtInvocation>(CtInvocation.class));
@@ -67,8 +79,6 @@ public class MethodProcessor extends AbstractProcessor<CtMethod> {
                 paprikaMethod.getInvocationData().add(new InvocationData(targetName,executable));
             }
         }
-
-
     }
 
     private int getComplexity(CtMethod<?> ctMethod){
@@ -78,12 +88,18 @@ public class MethodProcessor extends AbstractProcessor<CtMethod> {
 
         int numberOfReturns = ctMethod.getElements(new TypeFilter<CtReturn>(CtReturn.class)).size();
         int numberOfLoops = ctMethod.getElements(new TypeFilter<CtLoop>(CtLoop.class)).size();
-        int numberOfBinaryOperators = ctMethod.getElements(new TypeFilter<CtBinaryOperator>(CtBinaryOperator.class)).size();
+        int numberOfBinaryOperators = ctMethod.getElements(new TypeFilter<CtBinaryOperator>(CtBinaryOperator.class){
+            private final List<BinaryOperatorKind> operators = Arrays.asList(BinaryOperatorKind.AND, BinaryOperatorKind.OR);
+            @Override
+            public boolean matches(CtBinaryOperator element) {
+                return super.matches(element)&& operators.contains(element.getKind());
+            }
+        }).size();
         int numberOfCatches = ctMethod.getElements(new TypeFilter<CtCatch>(CtCatch.class)).size();
         int numberOfThrows = ctMethod.getElements(new TypeFilter<CtThrow>(CtThrow.class)).size();
         int numberOfBreaks = ctMethod.getElements(new TypeFilter<CtBreak>(CtBreak.class)).size();
         int numberOfContinues = ctMethod.getElements(new TypeFilter<CtContinue>(CtContinue.class)).size();
         return numberOfBreaks+numberOfCases+numberOfCatches+numberOfContinues+numberOfIfs+numberOfLoops+
-                numberOfReturns+numberOfTernaries+numberOfThrows+1;
+                numberOfReturns+numberOfTernaries+numberOfThrows+numberOfBinaryOperators+1;
     }
 }

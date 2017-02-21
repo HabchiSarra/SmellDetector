@@ -27,20 +27,50 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
             qualifiedName = splitName[0] + "$" +
                     ((CtNewClass)ctClass.getParent()).getType().getQualifiedName() + splitName[1] ;
         }
-
-        boolean isInterface = ctClass.isInterface();
-        boolean isStatic = false;
         String visibility = ctClass.getVisibility() == null ? "null"  : ctClass.getVisibility().toString();
         PaprikaModifiers paprikaModifiers=DataConverter.convertTextToModifier(visibility);
         if(paprikaModifiers==null){
             paprikaModifiers=PaprikaModifiers.PROTECTED;
         }
+        PaprikaClass paprikaClass =PaprikaClass.createPaprikaClass(qualifiedName,MainProcessor.currentApp,paprikaModifiers);
+        MainProcessor.currentClass=paprikaClass;
+        handleProperties(ctClass,paprikaClass);
+        handleAttachments(ctClass,paprikaClass);
+
+
+
+    }
+
+    public void handleAttachments(CtClass ctClass, PaprikaClass paprikaClass){
+        if(ctClass.getSuperclass()!=null)
+        {
+            paprikaClass.setParentName(ctClass.getSuperclass().getQualifiedName());
+        }
+        for (CtTypeReference<?> ctTypeReference : ctClass.getSuperInterfaces()) {
+            paprikaClass.getInterfacesNames().add(ctTypeReference.getQualifiedName());
+        }
+        String modifierText;
+        PaprikaModifiers paprikaModifiers1;
+        for (CtField<?> ctField : (List<CtField>)ctClass.getFields()) {
+            modifierText = ctField.getVisibility() == null ? "null"  : ctField.getVisibility().toString();
+            paprikaModifiers1=DataConverter.convertTextToModifier(modifierText);
+            if(paprikaModifiers1 == null){
+                paprikaModifiers1=PaprikaModifiers.PROTECTED;
+            }
+            PaprikaVariable.createPaprikaVariable(ctField.getSimpleName(),ctField.getType().getQualifiedName(), paprikaModifiers1, paprikaClass);
+        }
+
+    }
+
+    public void handleProperties(CtClass ctClass, PaprikaClass paprikaClass){
+
+        boolean isInterface = ctClass.isInterface();
+        boolean isStatic = false;
         for(ModifierKind modifierKind:ctClass.getModifiers()){
             if(modifierKind.toString().toLowerCase().equals("static")){
                 isStatic =true;
                 break;
             }
-            //System.out.println(" modifier "+modifierKind);
         }
 
         CtType myClass;
@@ -64,29 +94,9 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
 
         }
 
-        PaprikaClass paprikaClass =PaprikaClass.createPaprikaClass(qualifiedName,MainProcessor.currentApp,paprikaModifiers);
         paprikaClass.setInterface(isInterface);
         paprikaClass.setActivity(found);
         paprikaClass.setStatic(isStatic);
-        MainProcessor.currentClass=paprikaClass;
-        for (CtTypeReference<?> ctTypeReference : ctClass.getSuperInterfaces()) {
-            paprikaClass.getInterfacesNames().add(ctTypeReference.getQualifiedName());
-        }
-        if(ctClass.getSuperclass()!=null)
-        {
-            paprikaClass.setParentName(ctClass.getSuperclass().getQualifiedName());
-        }
-        String modifierText;
-        PaprikaModifiers paprikaModifiers1;
-        for (CtField<?> ctField : (List<CtField>)ctClass.getFields()) {
-            modifierText = ctField.getVisibility() == null ? "null"  : ctField.getVisibility().toString();
-            paprikaModifiers1=DataConverter.convertTextToModifier(modifierText);
-            if(paprikaModifiers1 == null){
-                paprikaModifiers1=PaprikaModifiers.PROTECTED;
-            }
-            PaprikaVariable.createPaprikaVariable(ctField.getSimpleName(),ctField.getType().getQualifiedName(), paprikaModifiers1, paprikaClass);
-        }
-
 
     }
 

@@ -10,11 +10,6 @@ public class Main {
 
 
     public static void main(String[] args) {
-
-//        List<CtType<?>> list = launcher.getFactory().Class().getAll();
-//        for(CtType ctType: list){
-//            System.out.println(ctType.getSimpleName());
-//        }
         String path ="../android/src/com/owncloud/android";
         String name = "owncloud";
         String key ="owncloud";
