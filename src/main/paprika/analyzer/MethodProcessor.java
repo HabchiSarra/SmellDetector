@@ -47,7 +47,7 @@ public class MethodProcessor extends AbstractProcessor<CtMethod> {
         String variableTarget =null;
         String variableName;
         for (CtFieldAccess ctFieldAccess : elements) {
-            if(ctFieldAccess.getTarget().getType()!=null)
+            if(ctFieldAccess.getTarget()!= null && ctFieldAccess.getTarget().getType()!=null)
             {
                 variableTarget=ctFieldAccess.getTarget().getType().getQualifiedName();
             }

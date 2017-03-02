@@ -194,4 +194,15 @@ public class PaprikaClass extends Entity{
     public void setInterfacesNames(ArrayList<String> interfacesNames) {
         this.interfacesNames = interfacesNames;
     }
+
+    public PaprikaMethod getPaprikaMethod(String methodName){
+        for(PaprikaMethod paprikaMethod: this.getPaprikaMethods()){
+            if(paprikaMethod.getName().equals(methodName)){
+                return paprikaMethod;
+            }
+        }
+        //TODO check the return type and modifier in the super classes
+        return  PaprikaMethod.createPaprikaMethod(methodName,PaprikaModifiers.PUBLIC,"Uknown",this);
+
+    }
 }

@@ -20,9 +20,6 @@ package metrics;
 
 import entities.PaprikaClass;
 
-/**
- * Created by antonin on 16-04-29.
- */
 public class IsBitmap extends UnaryMetric<Boolean> {
 
     private IsBitmap(PaprikaClass paprikaClass, boolean value){

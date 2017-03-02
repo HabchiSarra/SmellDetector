@@ -144,4 +144,32 @@ public class PaprikaApp extends Entity{
     public String getTargetSdkVersion() {
         return targetSdkVersion;
     }
+
+    public ArrayList<PaprikaMethod> getMethods(){
+        ArrayList<PaprikaMethod> paprikaMethods = new ArrayList<>();
+        for(PaprikaClass paprikaClass: this.getPaprikaClasses()){
+            for(PaprikaMethod paprikaMethod: paprikaClass.getPaprikaMethods()){
+                paprikaMethods.add(paprikaMethod);
+            }
+        }
+        return paprikaMethods;
+    }
+
+    public Entity getPaprikaClass( String className){
+        for(PaprikaClass paprikaClass: this.getPaprikaClasses()){
+            if(paprikaClass.getName().equals(className)){
+                return paprikaClass;
+            }
+        }
+        return PaprikaExternalClass.createPaprikaExternalClass(className,this);
+    }
+
+    public PaprikaClass getPaprikaInternalClass( String className){
+        for(PaprikaClass paprikaClass: this.getPaprikaClasses()){
+            if(paprikaClass.getName().equals(className)){
+                return paprikaClass;
+            }
+        }
+        return null;
+    }
 }

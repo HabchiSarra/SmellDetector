@@ -7,11 +7,11 @@ import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtConditional;
 import spoon.reflect.code.CtIf;
 import spoon.reflect.code.CtNewClass;
-import spoon.reflect.code.CtTry;
 import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
-import spoon.reflect.visitor.filter.TypeFilter;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 
@@ -19,6 +19,12 @@ import java.util.List;
  * Created by sarra on 17/02/17.
  */
 public class ClassProcessor extends AbstractProcessor<CtClass> {
+
+
+    private static final URLClassLoader classloader; static {
+        classloader = new URLClassLoader( MainProcessor.paths.toArray(new URL[MainProcessor.paths.size()]));
+    }
+
 
     public void process(CtClass ctClass) {
         String qualifiedName = ctClass.getQualifiedName();
@@ -73,25 +79,30 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
             }
         }
 
-        CtType myClass;
+        CtType myClass = ctClass;
         boolean found=false;
         if(ctClass.getSuperclass()!=null){
-            myClass=ctClass.getSuperclass().getDeclaration();
-            while(myClass!=null){
-                if(myClass.getSimpleName().contains("Activity"))
-                {
-                    found=true;
-                    break;
-                }
-                System.out.println("My class ::   "+myClass.getSimpleName());
-                if(myClass.getSuperclass()!=null) {
-                    myClass = myClass.getSuperclass().getDeclaration();
-                }else{
-                    myClass=null;
-                }
-
+            Class myRealClass;
+            CtTypeReference reference=null;
+            while(myClass != null){
+                    if (myClass.getSuperclass() != null) {
+                        reference= myClass.getSuperclass();
+                        myClass = myClass.getSuperclass().getDeclaration();
+                    } else {
+                        myClass = null;
+                    }
             }
 
+            myRealClass = null;
+            try {
+                myRealClass = classloader.loadClass(reference.getQualifiedName());
+                while(myRealClass.getSuperclass() != null){
+                    myRealClass = myRealClass.getSuperclass();
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            System.out.println("\n\n ------------------------------------------------- \n\n");
         }
 
         paprikaClass.setInterface(isInterface);

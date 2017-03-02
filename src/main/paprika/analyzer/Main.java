@@ -1,7 +1,10 @@
 package analyzer;
-
 import entities.*;
-import spoon.Launcher;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
 
 /**
  * Created by sarra on 17/02/17.
@@ -13,9 +16,14 @@ public class Main {
         String path ="../android/src/com/owncloud/android";
         String name = "owncloud";
         String key ="owncloud";
-        MainProcessor mainProcessor=new MainProcessor(name,key,path);
+        String sdkPath ="/home/sarra/IdeaProjects/Android-jars/android25.jar";
+        String jarsPath ="";
+        MainProcessor mainProcessor=new MainProcessor(name,key,path, sdkPath, jarsPath);
         mainProcessor.process();
-        showModel(MainProcessor.currentApp);
+        GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
+        graphCreator.createClassHierarchy();
+        graphCreator.createCallGraph();
+        //showModel(MainProcessor.currentApp);
 
 
     }
@@ -56,8 +64,6 @@ public class Main {
         System.out.println(" Type : "+paprikaVariable.getType());
         System.out.println(" Visbility : "+paprikaVariable.getModifier().name());
     }
-
-
 
 
 
