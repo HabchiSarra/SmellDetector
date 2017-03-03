@@ -40,6 +40,11 @@ public class PaprikaClass extends Entity{
     private boolean isInterface;
     private boolean isStatic;
     private boolean isActivity;
+    private boolean isBroadcastReceiver;
+    private boolean isService;
+    private boolean isContentProvider;
+    private boolean isView;
+    private boolean isAsyncTask;
     private ArrayList<String> interfacesNames;
 
     public PaprikaModifiers getModifier() {

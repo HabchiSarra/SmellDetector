@@ -40,8 +40,13 @@ public class MainProcessor {
         File folder =new File(jarsPath);
         try {
             paths =this.listFilesForFolder(folder);
-            paths.add(new URL(sdkPath));
-            //launcher.getEnvironment().setSourceClasspath(paths.toArray(new String[paths.size()]));
+            paths.add(new File(sdkPath).toURI().toURL());
+            String[] cl = new String[paths.size()];
+            for (int i = 0; i < paths.size(); i++) {
+                URL url = paths.get(i);
+                cl[i] = url.getPath();
+            }
+            launcher.getEnvironment().setSourceClasspath(cl);
             launcher.buildModel();
             ClassProcessor classProcessor=new ClassProcessor();
             MethodProcessor methodProcessor =new MethodProcessor();
@@ -57,11 +62,9 @@ public class MainProcessor {
     public ArrayList<URL> listFilesForFolder(final File folder) throws IOException {
         ArrayList<URL> jars =new ArrayList<>();
         for (final File fileEntry : folder.listFiles()) {
-            if (fileEntry.isDirectory()) {
-                listFilesForFolder(fileEntry);
-            } else {
+
                 jars.add(fileEntry.toURI().toURL());
-            }
+
         }
 
         return jars;

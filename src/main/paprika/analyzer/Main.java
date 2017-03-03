@@ -13,11 +13,11 @@ public class Main {
 
 
     public static void main(String[] args) {
-        String path ="../android/src/com/owncloud/android";
-        String name = "owncloud";
-        String key ="owncloud";
-        String sdkPath ="/home/sarra/IdeaProjects/Android-jars/android25.jar";
-        String jarsPath ="";
+        String path ="/home/sarra/Android-Projects/DuckDuckGo-Recursive/Android/app/src/main/java/com/duckduckgo/mobile/android";
+        String name = "DuckDuckGo";
+        String key ="DuckDuckGo";
+        String sdkPath ="/home/sarra/Android/Sdk/platforms/android-23/android.jar";
+        String jarsPath ="/home/sarra/Android-Projects/DuckDuckGo-Recursive/Android/app/runtime";
         MainProcessor mainProcessor=new MainProcessor(name,key,path, sdkPath, jarsPath);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);

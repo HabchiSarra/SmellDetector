@@ -69,7 +69,12 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
     }
 
     public void handleProperties(CtClass ctClass, PaprikaClass paprikaClass){
-
+        boolean isContentProvider =false;
+        boolean isAsyncTask=false;
+        boolean isService=false;
+        boolean isView=false;
+        boolean isActivity=false;
+        boolean isBroadcastReceiver=false;
         boolean isInterface = ctClass.isInterface();
         boolean isStatic = false;
         for(ModifierKind modifierKind:ctClass.getModifiers()){
@@ -80,6 +85,7 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
         }
 
         CtType myClass = ctClass;
+        boolean noSuperClass=false;
         boolean found=false;
         if(ctClass.getSuperclass()!=null){
             Class myRealClass;
@@ -89,18 +95,42 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
                         reference= myClass.getSuperclass();
                         myClass = myClass.getSuperclass().getDeclaration();
                     } else {
+                        noSuperClass=true;
                         myClass = null;
                     }
             }
 
             myRealClass = null;
-            try {
-                myRealClass = classloader.loadClass(reference.getQualifiedName());
-                while(myRealClass.getSuperclass() != null){
-                    myRealClass = myRealClass.getSuperclass();
+            if(!noSuperClass) {
+                try {
+                    myRealClass = classloader.loadClass(reference.getQualifiedName());
+                    while (myRealClass.getSuperclass() != null) {
+                       if(myRealClass.getSimpleName().equals("Activity")){
+                            isActivity=true;
+                            break;
+                        }else if(myRealClass.getSimpleName().equals("ContentProvider")){
+                            isContentProvider=true;
+                            break;
+                        }else if(myRealClass.getSimpleName().equals("AsyncTask")){
+                            isAsyncTask =true;
+                            break;
+                        }else if(myRealClass.getSimpleName().equals("View")){
+                            isView=true;
+                            break;
+                        }else if(myRealClass.getSimpleName().equals("BroadcastReceiver")){
+                            isBroadcastReceiver=true;
+                            break;
+                        }else if(myRealClass.getSimpleName().equals("Service")){
+                            isService=true;
+                            break;
+                        }
+                        myRealClass = myRealClass.getSuperclass();
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (NoClassDefFoundError e) {
+                    e.printStackTrace();
                 }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             }
             System.out.println("\n\n ------------------------------------------------- \n\n");
         }
