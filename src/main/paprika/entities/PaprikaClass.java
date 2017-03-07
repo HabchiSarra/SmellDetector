@@ -45,6 +45,9 @@ public class PaprikaClass extends Entity{
     private boolean isContentProvider;
     private boolean isView;
     private boolean isAsyncTask;
+    private boolean isApplication;
+    private boolean isInnerClass;
+    private int depthOfInheritance;
     private ArrayList<String> interfacesNames;
 
     public PaprikaModifiers getModifier() {
@@ -80,6 +83,14 @@ public class PaprikaClass extends Entity{
         this.isInterface=false;
         this.isStatic=false;
         this.isActivity=false;
+        this.isApplication=false;
+        this.isAsyncTask=false;
+        this.isService=false;
+        this.isContentProvider=false;
+        this.isBroadcastReceiver=false;
+        this.isInnerClass=false;
+        this.isView=false;
+        this.depthOfInheritance=0;
         this.interfacesNames=new ArrayList<>();
     }
 
@@ -115,7 +126,7 @@ public class PaprikaClass extends Entity{
         complexity += value;
     }
 
-    public void addChildren() { children += 1;}
+    public void addChild() { children += 1;}
 
     public int getComplexity() {
         return complexity;
@@ -209,5 +220,101 @@ public class PaprikaClass extends Entity{
         //TODO check the return type and modifier in the super classes
         return  PaprikaMethod.createPaprikaMethod(methodName,PaprikaModifiers.PUBLIC,"Uknown",this);
 
+    }
+
+    public int getDepthOfInheritance() {
+        return depthOfInheritance;
+    }
+
+    public void setDepthOfInheritance(int depthOfInheritance) {
+        this.depthOfInheritance = depthOfInheritance;
+    }
+
+    public void setComplexity(int complexity) {
+        this.complexity = complexity;
+    }
+
+    public void setChildren(int children) {
+        this.children = children;
+    }
+
+    public Set<PaprikaClass> getCoupled() {
+        return coupled;
+    }
+
+    public void setCoupled(Set<PaprikaClass> coupled) {
+        this.coupled = coupled;
+    }
+
+    public void setPaprikaMethods(Set<PaprikaMethod> paprikaMethods) {
+        this.paprikaMethods = paprikaMethods;
+    }
+
+    public void setPaprikaVariables(Set<PaprikaVariable> paprikaVariables) {
+        this.paprikaVariables = paprikaVariables;
+    }
+
+    public void setInterfaces(Set<PaprikaClass> interfaces) {
+        this.interfaces = interfaces;
+    }
+
+    public void setModifier(PaprikaModifiers modifier) {
+        this.modifier = modifier;
+    }
+
+    public boolean isBroadcastReceiver() {
+        return isBroadcastReceiver;
+    }
+
+    public void setBroadcastReceiver(boolean broadcastReceiver) {
+        isBroadcastReceiver = broadcastReceiver;
+    }
+
+    public boolean isService() {
+        return isService;
+    }
+
+    public void setService(boolean service) {
+        isService = service;
+    }
+
+    public boolean isContentProvider() {
+        return isContentProvider;
+    }
+
+    public void setContentProvider(boolean contentProvider) {
+        isContentProvider = contentProvider;
+    }
+
+    public boolean isView() {
+        return isView;
+    }
+
+    public void setView(boolean view) {
+        isView = view;
+    }
+
+    public boolean isAsyncTask() {
+        return isAsyncTask;
+    }
+
+    public void setAsyncTask(boolean asyncTask) {
+        isAsyncTask = asyncTask;
+    }
+
+    public boolean isApplication() {
+        return isApplication;
+    }
+
+    public void setApplication(boolean application) {
+        isApplication = application;
+    }
+
+    public boolean isInnerClass() {
+        return isInnerClass;
+    }
+
+    public void setInnerClass(boolean innerClass) {
+        isInnerClass = innerClass;
     }
 }

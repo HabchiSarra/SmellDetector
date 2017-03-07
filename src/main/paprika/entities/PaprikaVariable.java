@@ -56,4 +56,12 @@ public class PaprikaVariable extends Entity{
     }
 
     public boolean isProtected(){ return modifier == PaprikaModifiers.PROTECTED; }
+
+    public PaprikaClass getPaprikaClass() {
+        return paprikaClass;
+    }
+
+    public void setPaprikaClass(PaprikaClass paprikaClass) {
+        this.paprikaClass = paprikaClass;
+    }
 }

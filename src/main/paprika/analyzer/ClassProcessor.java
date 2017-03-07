@@ -36,15 +36,25 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
         String visibility = ctClass.getVisibility() == null ? "null"  : ctClass.getVisibility().toString();
         PaprikaModifiers paprikaModifiers=DataConverter.convertTextToModifier(visibility);
         if(paprikaModifiers==null){
-            paprikaModifiers=PaprikaModifiers.PROTECTED;
+            paprikaModifiers=PaprikaModifiers.DEFAULT;
         }
         PaprikaClass paprikaClass =PaprikaClass.createPaprikaClass(qualifiedName,MainProcessor.currentApp,paprikaModifiers);
         MainProcessor.currentClass=paprikaClass;
         handleProperties(ctClass,paprikaClass);
         handleAttachments(ctClass,paprikaClass);
+        if(ctClass.getQualifiedName().contains("$")){
+            paprikaClass.setInnerClass(true);
+        }
+        processMethods(ctClass);
 
 
+    }
 
+    public void processMethods(CtClass ctClass){
+        MethodProcessor methodProcessor =new MethodProcessor();
+        for (Object o : ctClass.getMethods()) {
+           methodProcessor.process((CtMethod) o);
+        }
     }
 
     public void handleAttachments(CtClass ctClass, PaprikaClass paprikaClass){
@@ -69,6 +79,8 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
     }
 
     public void handleProperties(CtClass ctClass, PaprikaClass paprikaClass){
+        int doi =0;
+        boolean isApplication=false;
         boolean isContentProvider =false;
         boolean isAsyncTask=false;
         boolean isService=false;
@@ -86,11 +98,11 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
 
         CtType myClass = ctClass;
         boolean noSuperClass=false;
-        boolean found=false;
         if(ctClass.getSuperclass()!=null){
             Class myRealClass;
             CtTypeReference reference=null;
             while(myClass != null){
+                doi++;
                     if (myClass.getSuperclass() != null) {
                         reference= myClass.getSuperclass();
                         myClass = myClass.getSuperclass().getDeclaration();
@@ -103,27 +115,25 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
             myRealClass = null;
             if(!noSuperClass) {
                 try {
+
                     myRealClass = classloader.loadClass(reference.getQualifiedName());
                     while (myRealClass.getSuperclass() != null) {
+                        doi++;
                        if(myRealClass.getSimpleName().equals("Activity")){
                             isActivity=true;
-                            break;
                         }else if(myRealClass.getSimpleName().equals("ContentProvider")){
                             isContentProvider=true;
-                            break;
                         }else if(myRealClass.getSimpleName().equals("AsyncTask")){
                             isAsyncTask =true;
-                            break;
                         }else if(myRealClass.getSimpleName().equals("View")){
                             isView=true;
-                            break;
                         }else if(myRealClass.getSimpleName().equals("BroadcastReceiver")){
                             isBroadcastReceiver=true;
-                            break;
                         }else if(myRealClass.getSimpleName().equals("Service")){
                             isService=true;
-                            break;
-                        }
+                        }else if(myRealClass.getSimpleName().equals("Application")){
+                           isApplication=true;
+                       }
                         myRealClass = myRealClass.getSuperclass();
                     }
                 } catch (ClassNotFoundException e) {
@@ -132,12 +142,20 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
                     e.printStackTrace();
                 }
             }
-            System.out.println("\n\n ------------------------------------------------- \n\n");
         }
 
         paprikaClass.setInterface(isInterface);
-        paprikaClass.setActivity(found);
+        paprikaClass.setActivity(isActivity);
         paprikaClass.setStatic(isStatic);
+        paprikaClass.setAsyncTask(isAsyncTask);
+        paprikaClass.setContentProvider(isContentProvider);
+        paprikaClass.setBroadcastReceiver(isBroadcastReceiver);
+        paprikaClass.setService(isService);
+        paprikaClass.setView(isView);
+        paprikaClass.setApplication(isApplication);
+        paprikaClass.setDepthOfInheritance(doi);
+
+
 
     }
 

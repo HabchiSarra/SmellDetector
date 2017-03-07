@@ -35,7 +35,6 @@ public class GraphCreator {
             }
 
             for(VariableData variableData: paprikaMethod.getUsedVariablesData()){
-                //TODO check the logic
                 paprikaClass=paprikaApp.getPaprikaInternalClass(variableData.getClassName());
                 if(paprikaClass!=null){
                     paprikaVariable = paprikaClass.findVariable(variableData.getVariableName());
@@ -56,10 +55,10 @@ public class GraphCreator {
                 PaprikaClass parentClass = paprikaClass.getPaprikaApp().getPaprikaInternalClass(parentName);
                 paprikaClass.setParent(parentClass);
                 if (parentClass != null) {
+                    paprikaClass.addChild();
                     paprikaClass.setParentName(null);
                 }
             }
-
             for (String interfaceName : paprikaClass.getInterfacesNames()) {
                 implementedInterface = paprikaClass.getPaprikaApp().getPaprikaInternalClass(interfaceName);
                 if (implementedInterface != null) {

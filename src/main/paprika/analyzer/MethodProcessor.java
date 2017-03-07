@@ -1,12 +1,13 @@
 package analyzer;
-
 import entities.PaprikaArgument;
 import entities.PaprikaMethod;
 import entities.PaprikaModifiers;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
+import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.util.Arrays;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * Created by sarra on 20/02/17.
  */
-public class MethodProcessor extends AbstractProcessor<CtMethod> {
+public class MethodProcessor  {
     public void process(CtMethod ctMethod) {
 
         String name =ctMethod.getSimpleName();
@@ -29,16 +30,19 @@ public class MethodProcessor extends AbstractProcessor<CtMethod> {
         int position = 0;
         String qualifiedName;
         PaprikaMethod paprikaMethod = PaprikaMethod.createPaprikaMethod(name, paprikaModifiers, returnType, MainProcessor.currentClass);
+        MainProcessor.currentMethod=paprikaMethod;
         for (CtParameter<?> ctParameter : (List<CtParameter>)ctMethod.getParameters()) {
              qualifiedName = ctParameter.getType().getQualifiedName();
             PaprikaArgument.createPaprikaArgument(qualifiedName,position,paprikaMethod);
              position++;
         }
+        int numberOfDeclaredLocals = ctMethod.getElements(new TypeFilter<CtLocalVariable>(CtLocalVariable.class)).size();
         paprikaMethod.setNumberOfLines(ctMethod.getPosition().getSourceEnd()-ctMethod.getPosition().getSourceStart());
-        MainProcessor.currentMethod=paprikaMethod;
+
         handleUsedVariables(ctMethod,paprikaMethod);
         handleInvocations(ctMethod,paprikaMethod);
         paprikaMethod.setComplexity(getComplexity(ctMethod));
+        paprikaMethod.setNumberOfDeclaredLocals(numberOfDeclaredLocals);
 
     }
 
@@ -58,21 +62,11 @@ public class MethodProcessor extends AbstractProcessor<CtMethod> {
     }
 
     private void handleInvocations(CtMethod ctMethod, PaprikaMethod paprikaMethod){
-        String targetName =null;
+        String targetName;
         String executable;
         List<CtInvocation> invocations = ctMethod.getElements(new TypeFilter<CtInvocation>(CtInvocation.class));
         for (CtInvocation invocation : invocations) {
-            if(invocation.getTarget() instanceof CtInvocation){
-                if(((CtInvocation)invocation.getTarget()).getType()!=null)
-                {
-                    targetName=((CtInvocation)invocation.getTarget()).getType().getQualifiedName();
-                }
-            }else if(invocation.getTarget() instanceof CtTypeAccess){
-                if(((CtTypeAccess)invocation.getTarget()).getType()!=null)
-                {
-                    targetName=((CtTypeAccess)invocation.getTarget()).getType().getQualifiedName();
-                }
-            }
+            targetName=getTarget(invocation);
             executable = invocation.getExecutable().getSimpleName();
             if(targetName!=null)
             {
@@ -81,11 +75,23 @@ public class MethodProcessor extends AbstractProcessor<CtMethod> {
         }
     }
 
+    private String getTarget(CtInvocation ctInvocation){
+        if(ctInvocation.getTarget() instanceof CtInvocation){
+            return getTarget((CtInvocation) ctInvocation.getTarget());
+        }else{
+            try{
+                return ctInvocation.getExecutable().getDeclaringType().getQualifiedName();
+            }catch (NullPointerException nullPointerException){
+                nullPointerException.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     private int getComplexity(CtMethod<?> ctMethod){
         int numberOfTernaries = ctMethod.getElements(new TypeFilter<CtConditional>(CtConditional.class)).size();
         int numberOfIfs =ctMethod.getElements(new TypeFilter<CtIf>(CtIf.class)).size();
         int numberOfCases = ctMethod.getElements(new TypeFilter<CtCase>(CtCase.class)).size();
-
         int numberOfReturns = ctMethod.getElements(new TypeFilter<CtReturn>(CtReturn.class)).size();
         int numberOfLoops = ctMethod.getElements(new TypeFilter<CtLoop>(CtLoop.class)).size();
         int numberOfBinaryOperators = ctMethod.getElements(new TypeFilter<CtBinaryOperator>(CtBinaryOperator.class){

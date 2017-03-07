@@ -22,6 +22,7 @@ public class MainProcessor {
     String appPath;
     String jarsPath;
     String sdkPath;
+
     public MainProcessor(String appName, String appKey, String appPath, String sdkPath, String jarsPath) {
         this.currentApp =PaprikaApp.createPaprikaApp(appName,appKey);
         currentClass= null;
@@ -32,8 +33,6 @@ public class MainProcessor {
     }
 
     public void process(){
-
-
         Launcher launcher=new Launcher();
         launcher.addInputResource(appPath);
         launcher.getEnvironment().setNoClasspath(true);
@@ -48,10 +47,8 @@ public class MainProcessor {
             }
             launcher.getEnvironment().setSourceClasspath(cl);
             launcher.buildModel();
-            ClassProcessor classProcessor=new ClassProcessor();
-            MethodProcessor methodProcessor =new MethodProcessor();
+            ClassProcessor classProcessor= new ClassProcessor();
             launcher.addProcessor(classProcessor);
-            launcher.addProcessor(methodProcessor);
             launcher.process();
         }catch (IOException ioException){
             ioException.printStackTrace();
@@ -66,7 +63,6 @@ public class MainProcessor {
                 jars.add(fileEntry.toURI().toURL());
 
         }
-
         return jars;
     }
 }

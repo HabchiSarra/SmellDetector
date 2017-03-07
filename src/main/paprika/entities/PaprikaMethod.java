@@ -39,6 +39,7 @@ public class PaprikaMethod extends Entity{
     private ArrayList<VariableData> usedVariablesData;
     private ArrayList<InvocationData> invocationData;
     private int complexity;
+    private int numberOfDeclaredLocals;
     private List<PaprikaArgument> arguments;
 
     public String getReturnType() {
@@ -60,7 +61,8 @@ public class PaprikaMethod extends Entity{
         this.numberOfLines=0;
         this.usedVariablesData = new ArrayList<>();
         this.invocationData =new ArrayList<>();
-        complexity =0 ;
+        this.complexity =0 ;
+        this.numberOfDeclaredLocals=0;
     }
 
     public static PaprikaMethod createPaprikaMethod(String name, PaprikaModifiers modifier, String returnType,  PaprikaClass paprikaClass) {
@@ -144,5 +146,13 @@ public class PaprikaMethod extends Entity{
 
     public void setComplexity(int complexity) {
         this.complexity = complexity;
+    }
+
+    public int getNumberOfDeclaredLocals() {
+        return numberOfDeclaredLocals;
+    }
+
+    public void setNumberOfDeclaredLocals(int numberOfDeclaredLocals) {
+        this.numberOfDeclaredLocals = numberOfDeclaredLocals;
     }
 }
