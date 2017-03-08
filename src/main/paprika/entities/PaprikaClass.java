@@ -30,8 +30,8 @@ public class PaprikaClass extends Entity{
     private PaprikaClass parent;
     //parent name to cover library case
     private String parentName;
-    private int complexity;
     private int children;
+    private int complexity;
     private Set<PaprikaClass> coupled;
     private Set<PaprikaMethod> paprikaMethods;
     private Set<PaprikaVariable> paprikaVariables;
@@ -73,7 +73,6 @@ public class PaprikaClass extends Entity{
     private PaprikaClass(String name, PaprikaApp paprikaApp, PaprikaModifiers modifier) {
         this.setName(name);
         this.paprikaApp = paprikaApp;
-        this.complexity = 0;
         this.children = 0;
         this.paprikaMethods  = new HashSet<>();
         this.paprikaVariables = new HashSet<>();
@@ -92,6 +91,7 @@ public class PaprikaClass extends Entity{
         this.isView=false;
         this.depthOfInheritance=0;
         this.interfacesNames=new ArrayList<>();
+        complexity=0;
     }
 
     public static PaprikaClass createPaprikaClass(String name, PaprikaApp paprikaApp, PaprikaModifiers modifier) {
@@ -122,14 +122,15 @@ public class PaprikaClass extends Entity{
         this.paprikaApp = paprikaApp;
     }
 
-    public void addComplexity(int value){
-        complexity += value;
-    }
 
     public void addChild() { children += 1;}
 
-    public int getComplexity() {
-        return complexity;
+    public int computeComplexity() {
+
+        for(PaprikaMethod paprikaMethod: this.getPaprikaMethods()){
+            this.complexity+=paprikaMethod.getComplexity();
+        }
+        return this.complexity;
     }
 
     public int getChildren() { return children; }
@@ -163,7 +164,7 @@ public class PaprikaClass extends Entity{
         The NPath complexity is just the combinatorial of the cyclomatic complexity
      **/
     public double computeNPathComplexity() {
-        return Math.pow(2.0, (double) getComplexity());
+        return Math.pow(2.0, (double) this.complexity);
     }
 
     public void addPaprikaVariable(PaprikaVariable paprikaVariable) {

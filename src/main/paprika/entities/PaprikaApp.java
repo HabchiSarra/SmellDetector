@@ -161,6 +161,11 @@ public class PaprikaApp extends Entity{
                 return paprikaClass;
             }
         }
+        for(PaprikaExternalClass paprikaExternalClass: this.getPaprikaExternalClasses()){
+            if(paprikaExternalClass.getName().equals(className)){
+                return paprikaExternalClass;
+            }
+        }
         return PaprikaExternalClass.createPaprikaExternalClass(className,this);
     }
 

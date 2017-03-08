@@ -18,23 +18,23 @@
 
 package metrics;
 
-import entities.PaprikaClass;
+import entities.PaprikaMethod;
 
 /**
  * Created by Geoffrey Hecht on 22/05/14.
  */
-public class ClassComplexity extends UnaryMetric<Integer> {
+public class NumberOfLines extends UnaryMetric<Integer> {
 
-    private ClassComplexity(PaprikaClass paprikaClass) {
-        this.value = paprikaClass.computeComplexity();
-        this.entity = paprikaClass;
-        this.name = "class_complexity";
+    private NumberOfLines(PaprikaMethod paprikaMethod, int value) {
+        this.value = value;
+        this.entity = paprikaMethod;
+        this.name = "number_of_Lines";
     }
 
-    public static ClassComplexity createClassComplexity(PaprikaClass paprikaClass) {
-        ClassComplexity classComplexity =  new ClassComplexity(paprikaClass);
-        classComplexity.updateEntity();
-        return classComplexity;
+    public static NumberOfLines createNumberOfLines(PaprikaMethod paprikaMethod, int value) {
+        NumberOfLines numberOfLines = new NumberOfLines(paprikaMethod, value);
+        numberOfLines.updateEntity();
+        return numberOfLines;
     }
 
 }

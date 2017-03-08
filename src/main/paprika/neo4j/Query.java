@@ -16,25 +16,24 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package metrics;
+package neo4j;
 
-import entities.PaprikaMethod;
+import org.neo4j.cypher.CypherException;
+import org.neo4j.graphdb.GraphDatabaseService;
+
+import java.io.IOException;
 
 /**
- * Created by Geoffrey Hecht on 22/05/14.
+ * Created by Geoffrey Hecht on 17/08/15.
  */
-public class NumberOfInstructions extends UnaryMetric<Integer> {
+public abstract class Query {
+    protected QueryEngine queryEngine;
+    protected GraphDatabaseService graphDatabaseService;
 
-    private NumberOfInstructions(PaprikaMethod paprikaMethod, int value) {
-        this.value = value;
-        this.entity = paprikaMethod;
-        this.name = "number_of_instructions";
+    public Query(QueryEngine queryEngine) {
+        this.queryEngine = queryEngine;
+        graphDatabaseService = queryEngine.getGraphDatabaseService();
     }
 
-    public static NumberOfInstructions createNumberOfInstructions(PaprikaMethod paprikaMethod, int value) {
-        NumberOfInstructions  numberOfInstructions = new NumberOfInstructions(paprikaMethod, value);
-        numberOfInstructions.updateEntity();
-        return numberOfInstructions;
-    }
-
+    public abstract void execute(boolean details) throws CypherException, IOException;
 }

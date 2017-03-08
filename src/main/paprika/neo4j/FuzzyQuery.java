@@ -16,25 +16,21 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package metrics;
+package neo4j;
 
-import entities.PaprikaClass;
+import org.neo4j.cypher.CypherException;
+
+import java.io.IOException;
 
 /**
- * Created by Geoffrey Hecht on 22/05/14.
+ * Created by Geoffrey Hecht on 17/08/15.
  */
-public class ClassComplexity extends UnaryMetric<Integer> {
+public abstract class FuzzyQuery extends Query {
+    protected String fclFile;
 
-    private ClassComplexity(PaprikaClass paprikaClass) {
-        this.value = paprikaClass.computeComplexity();
-        this.entity = paprikaClass;
-        this.name = "class_complexity";
+    public FuzzyQuery(QueryEngine queryEngine) {
+        super(queryEngine);
     }
 
-    public static ClassComplexity createClassComplexity(PaprikaClass paprikaClass) {
-        ClassComplexity classComplexity =  new ClassComplexity(paprikaClass);
-        classComplexity.updateEntity();
-        return classComplexity;
-    }
-
+    public abstract void executeFuzzy(boolean details) throws CypherException, IOException;
 }

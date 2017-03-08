@@ -15,30 +15,30 @@ public class GraphCreator {
         this.paprikaApp = paprikaApp;
     }
 
-    public void createCallGraph(){
+    public void createCallGraph() {
         Entity targetClass;
         Entity targetMethod;
         PaprikaClass paprikaClass;
         PaprikaVariable paprikaVariable;
-        ArrayList<PaprikaMethod> paprikaMethods =paprikaApp.getMethods();
-
-        for(PaprikaMethod paprikaMethod: paprikaMethods){
-            for(InvocationData invocationData: paprikaMethod.getInvocationData()){
+        ArrayList<PaprikaMethod> paprikaMethods = paprikaApp.getMethods();
+        for (PaprikaMethod paprikaMethod : paprikaMethods) {
+            for (InvocationData invocationData : paprikaMethod.getInvocationData()) {
                 targetClass = paprikaApp.getPaprikaClass(invocationData.getTarget());
-                if(targetClass instanceof PaprikaClass){
-                    targetMethod=((PaprikaClass) targetClass).getPaprikaMethod(invocationData.getMethod());
-                }else {
-                    targetMethod =PaprikaExternalMethod.createPaprikaExternalMethod(invocationData.getMethod(),"Uknown",
+                if (targetClass instanceof PaprikaClass) {
+                    targetMethod = ((PaprikaClass) targetClass).getPaprikaMethod(invocationData.getMethod());
+                } else {
+                    //TODO get the return type
+                    targetMethod = PaprikaExternalMethod.createPaprikaExternalMethod(invocationData.getMethod(), "Uknown",
                             (PaprikaExternalClass) targetClass);
                 }
                 paprikaMethod.callMethod(targetMethod);
             }
 
-            for(VariableData variableData: paprikaMethod.getUsedVariablesData()){
-                paprikaClass=paprikaApp.getPaprikaInternalClass(variableData.getClassName());
-                if(paprikaClass!=null){
+            for (VariableData variableData : paprikaMethod.getUsedVariablesData()) {
+                paprikaClass = paprikaApp.getPaprikaInternalClass(variableData.getClassName());
+                if (paprikaClass != null) {
                     paprikaVariable = paprikaClass.findVariable(variableData.getVariableName());
-                    if(paprikaVariable != null){
+                    if (paprikaVariable != null) {
                         paprikaMethod.useVariable(paprikaVariable);
                     }
                 }
@@ -47,8 +47,8 @@ public class GraphCreator {
 
     }
 
-    public void createClassHierarchy(){
-        for(PaprikaClass paprikaClass : paprikaApp.getPaprikaClasses()) {
+    public void createClassHierarchy() {
+        for (PaprikaClass paprikaClass : paprikaApp.getPaprikaClasses()) {
             String parentName = paprikaClass.getParentName();
             PaprikaClass implementedInterface;
             if (parentName != null) {
@@ -68,7 +68,6 @@ public class GraphCreator {
 
         }
     }
-
 
 
 }

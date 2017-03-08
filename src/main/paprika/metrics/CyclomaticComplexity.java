@@ -34,7 +34,6 @@ public class CyclomaticComplexity extends UnaryMetric<Integer> {
     public static CyclomaticComplexity createCyclomaticComplexity(PaprikaMethod paprikaMethod, int value) {
         CyclomaticComplexity cyclomaticComplexity =  new CyclomaticComplexity(paprikaMethod, value);
         cyclomaticComplexity.updateEntity();
-        paprikaMethod.getPaprikaClass().addComplexity(value);
         return cyclomaticComplexity;
     }
 

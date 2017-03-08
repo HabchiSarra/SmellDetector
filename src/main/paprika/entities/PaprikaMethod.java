@@ -41,6 +41,10 @@ public class PaprikaMethod extends Entity{
     private int complexity;
     private int numberOfDeclaredLocals;
     private List<PaprikaArgument> arguments;
+    private boolean isConstructor;
+    private boolean isGetter;
+    private boolean isSetter;
+    private boolean isStatic;
 
     public String getReturnType() {
         return returnType;
@@ -63,6 +67,10 @@ public class PaprikaMethod extends Entity{
         this.invocationData =new ArrayList<>();
         this.complexity =0 ;
         this.numberOfDeclaredLocals=0;
+        this.isConstructor=false;
+        this.isSetter=false;
+        this.isGetter=false;
+        this.isStatic=false;
     }
 
     public static PaprikaMethod createPaprikaMethod(String name, PaprikaModifiers modifier, String returnType,  PaprikaClass paprikaClass) {
@@ -154,5 +162,37 @@ public class PaprikaMethod extends Entity{
 
     public void setNumberOfDeclaredLocals(int numberOfDeclaredLocals) {
         this.numberOfDeclaredLocals = numberOfDeclaredLocals;
+    }
+
+    public boolean isConstructor() {
+        return isConstructor;
+    }
+
+    public void setConstructor(boolean constructor) {
+        isConstructor = constructor;
+    }
+
+    public boolean isGetter() {
+        return isGetter;
+    }
+
+    public void setGetter(boolean getter) {
+        isGetter = getter;
+    }
+
+    public boolean isSetter() {
+        return isSetter;
+    }
+
+    public void setSetter(boolean setter) {
+        isSetter = setter;
+    }
+
+    public boolean isStatic() {
+        return isStatic;
+    }
+
+    public void setStatic(boolean aStatic) {
+        isStatic = aStatic;
     }
 }

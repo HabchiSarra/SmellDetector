@@ -16,25 +16,20 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package metrics;
+package neo4j;
 
-import entities.PaprikaClass;
+import org.neo4j.graphdb.RelationshipType;
 
 /**
- * Created by Geoffrey Hecht on 22/05/14.
+ * Created by Geoffrey Hecht on 05/06/14.
  */
-public class ClassComplexity extends UnaryMetric<Integer> {
-
-    private ClassComplexity(PaprikaClass paprikaClass) {
-        this.value = paprikaClass.computeComplexity();
-        this.entity = paprikaClass;
-        this.name = "class_complexity";
-    }
-
-    public static ClassComplexity createClassComplexity(PaprikaClass paprikaClass) {
-        ClassComplexity classComplexity =  new ClassComplexity(paprikaClass);
-        classComplexity.updateEntity();
-        return classComplexity;
-    }
-
+public enum RelationTypes implements RelationshipType {
+    APP_OWNS_CLASS,
+    CLASS_OWNS_METHOD,
+    CLASS_OWNS_VARIABLE,
+    METHOD_OWNS_ARGUMENT,
+    IMPLEMENTS,
+    EXTENDS,
+    CALLS,
+    USES
 }
