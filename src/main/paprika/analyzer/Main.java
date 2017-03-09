@@ -1,6 +1,7 @@
 package analyzer;
 
 import entities.*;
+import metrics.MetricsCalculator;
 
 /**
  * Created by sarra on 17/02/17.
@@ -19,7 +20,7 @@ public class Main {
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();
         graphCreator.createCallGraph();
-
+        MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
 
         showModel(MainProcessor.currentApp);
     }
@@ -61,6 +62,7 @@ public class Main {
         System.out.println(" Method : " + paprikaMethod.getName());
         System.out.println(" Return type : " + paprikaMethod.getReturnType());
         System.out.println(" Visbility : " + paprikaMethod.getModifier().name());
+        System.out.println(" isGetter : " + paprikaMethod.isGetter() + " isSetter : " + paprikaMethod.isSetter() + " isConstructor : " + paprikaMethod.isConstructor());
         for (PaprikaArgument paprikaArgument : paprikaMethod.getArguments()) {
             showArgument(paprikaArgument);
         }

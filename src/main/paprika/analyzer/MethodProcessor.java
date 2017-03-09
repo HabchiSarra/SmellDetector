@@ -139,6 +139,7 @@ public class MethodProcessor {
     }
 
     private boolean checkSetter(CtMethod element) {
+
         if (element.getBody().getStatements().size() != 1) {
             return false;
         }
@@ -155,16 +156,21 @@ public class MethodProcessor {
         if (!(ctAssignment.getAssigned() instanceof CtFieldWrite)) {
             return false;
         }
-        if (!(ctAssignment.getAssignment().equals(element.getParameters().get(0)))) {
+        if (!(ctAssignment.getAssignment() instanceof CtVariableRead)) {
             return false;
         }
-        CtFieldWrite returnedExpression = (CtFieldWrite) ctAssignment.getAssigned();
-
-        CtType parent = element.getParent(CtType.class);
-        if (parent.equals(returnedExpression.getVariable().getDeclaration().getDeclaringType())) {
+        CtVariableRead ctVariableRead = (CtVariableRead) ctAssignment.getAssignment();
+        if (element.getParameters().size() != 1) {
+            return false;
+        }
+        if (!(ctVariableRead.getVariable().getDeclaration().equals(element.getParameters().get(0)))) {
+            return false;
+        }
+        CtFieldWrite returnedExpression = (CtFieldWrite) ((CtAssignment) statement).getAssigned();
+        if (returnedExpression.getTarget() instanceof CtThisAccess) {
             return true;
         }
-        return false;
 
+        return false;
     }
 }
