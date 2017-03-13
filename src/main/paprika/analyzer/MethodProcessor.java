@@ -4,10 +4,7 @@ import entities.PaprikaArgument;
 import entities.PaprikaMethod;
 import entities.PaprikaModifiers;
 import spoon.reflect.code.*;
-import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.CtParameter;
-import spoon.reflect.declaration.CtType;
-import spoon.reflect.declaration.ModifierKind;
+import spoon.reflect.declaration.*;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.util.Arrays;
@@ -57,12 +54,19 @@ public class MethodProcessor {
         List<CtFieldAccess> elements = ctMethod.getElements(new TypeFilter<CtFieldAccess>(CtFieldAccess.class));
         String variableTarget = null;
         String variableName;
+
+
         for (CtFieldAccess ctFieldAccess : elements) {
             if (ctFieldAccess.getTarget() != null && ctFieldAccess.getTarget().getType() != null) {
-                variableTarget = ctFieldAccess.getTarget().getType().getQualifiedName();
+                if(ctFieldAccess.getTarget().getType().getDeclaration() == ctMethod.getDeclaringType()){
+                    variableTarget = ctFieldAccess.getTarget().getType().getQualifiedName();
+                    variableName = ctFieldAccess.getVariable().getSimpleName();
+                    paprikaMethod.getUsedVariablesData().add(new VariableData(variableTarget, variableName));
+                }
+
             }
-            variableName = ctFieldAccess.getVariable().getSimpleName();
-            paprikaMethod.getUsedVariablesData().add(new VariableData(variableTarget, variableName));
+
+
         }
 
     }

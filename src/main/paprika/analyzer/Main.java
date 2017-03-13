@@ -2,6 +2,7 @@ package analyzer;
 
 import entities.*;
 import metrics.MetricsCalculator;
+import neo4j.ModelToGraph;
 
 /**
  * Created by sarra on 17/02/17.
@@ -21,8 +22,9 @@ public class Main {
         graphCreator.createClassHierarchy();
         graphCreator.createCallGraph();
         MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
-
-        showModel(MainProcessor.currentApp);
+        ModelToGraph modelToGraph=new ModelToGraph("/home/sarra/BDD");
+        modelToGraph.insertApp(MainProcessor.currentApp);
+//        showModel(MainProcessor.currentApp);
     }
 
     public static void showModel(PaprikaApp app) {

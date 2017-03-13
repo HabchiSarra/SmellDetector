@@ -90,7 +90,7 @@ public class MetricsCalculator {
 
             NumberOfMethods.createNumberOfMethods(paprikaClass, paprikaClass.getPaprikaMethods().size());
             NumberOfImplementedInterfaces.createNumberOfImplementedInterfaces(paprikaClass,
-                    paprikaClass.getInterfaces().size());
+                    paprikaClass.getInterfacesNames().size());
             CouplingBetweenObjects.createCouplingBetweenObjects(paprikaClass);
             DepthOfInheritance.createDepthOfInheritance(paprikaClass,paprikaClass.getDepthOfInheritance());
             LackofCohesionInMethods.createLackofCohesionInMethods(paprikaClass);
