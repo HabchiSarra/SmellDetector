@@ -22,7 +22,7 @@ public class Main {
         graphCreator.createClassHierarchy();
         graphCreator.createCallGraph();
         MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
-        ModelToGraph modelToGraph=new ModelToGraph("/home/sarra/BDD");
+        ModelToGraph modelToGraph=new ModelToGraph("/home/sarra/Paprika-BDD/databases/graph.db");
         modelToGraph.insertApp(MainProcessor.currentApp);
 //        showModel(MainProcessor.currentApp);
     }

@@ -75,14 +75,24 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
             paprikaClass.getInterfacesNames().add(ctTypeReference.getQualifiedName());
         }
         String modifierText;
+        PaprikaVariable paprikaVariable;
         PaprikaModifiers paprikaModifiers1;
+        boolean isStatic;
         for (CtField<?> ctField : (List<CtField>) ctClass.getFields()) {
             modifierText = ctField.getVisibility() == null ? "null" : ctField.getVisibility().toString();
             paprikaModifiers1 = DataConverter.convertTextToModifier(modifierText);
             if (paprikaModifiers1 == null) {
                 paprikaModifiers1 = PaprikaModifiers.PROTECTED;
             }
-            PaprikaVariable.createPaprikaVariable(ctField.getSimpleName(), ctField.getType().getQualifiedName(), paprikaModifiers1, paprikaClass);
+            paprikaVariable=PaprikaVariable.createPaprikaVariable(ctField.getSimpleName(), ctField.getType().getQualifiedName(), paprikaModifiers1, paprikaClass);
+            isStatic=false;
+            for (ModifierKind modifierKind : ctField.getModifiers()) {
+                if (modifierKind.toString().toLowerCase().equals("static")) {
+                    isStatic = true;
+                    break;
+                }
+            }
+            paprikaVariable.setStatic(isStatic);
         }
 
     }
@@ -163,8 +173,6 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
         paprikaClass.setView(isView);
         paprikaClass.setApplication(isApplication);
         paprikaClass.setDepthOfInheritance(doi);
-
-
     }
 
 

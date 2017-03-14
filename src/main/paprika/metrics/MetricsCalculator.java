@@ -96,9 +96,19 @@ public class MetricsCalculator {
             LackofCohesionInMethods.createLackofCohesionInMethods(paprikaClass);
             ClassComplexity.createClassComplexity(paprikaClass);
             NPathComplexity.createNPathComplexity(paprikaClass);
+            if(paprikaClass.isStatic())
+            {
+                IsStatic.createIsStatic(paprikaClass,true);
+            }
             NumberOfChildren.createNumberOfChildren(paprikaClass);
             for(PaprikaMethod paprikaMethod: paprikaClass.getPaprikaMethods()){
                 calculateMethodMetrics(paprikaMethod);
+            }
+
+            for (PaprikaVariable paprikaVariable: paprikaClass.getPaprikaVariables()){
+                if(paprikaVariable.isStatic()){
+                    IsStatic.createIsStatic(paprikaVariable,true);
+                }
             }
 
         }

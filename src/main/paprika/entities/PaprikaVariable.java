@@ -25,6 +25,7 @@ public class PaprikaVariable extends Entity{
     private PaprikaClass paprikaClass;
     private String type;
     private PaprikaModifiers modifier;
+    private boolean isStatic;
 
     public String getType() {
         return type;
@@ -39,6 +40,7 @@ public class PaprikaVariable extends Entity{
         this.name = name;
         this.modifier = modifier;
         this.paprikaClass = paprikaClass;
+        this.isStatic=false;
     }
 
     public static PaprikaVariable createPaprikaVariable(String name, String type, PaprikaModifiers modifier, PaprikaClass paprikaClass) {
@@ -63,5 +65,13 @@ public class PaprikaVariable extends Entity{
 
     public void setPaprikaClass(PaprikaClass paprikaClass) {
         this.paprikaClass = paprikaClass;
+    }
+
+    public boolean isStatic() {
+        return isStatic;
+    }
+
+    public void setStatic(boolean aStatic) {
+        isStatic = aStatic;
     }
 }

@@ -120,6 +120,9 @@ public class MethodProcessor {
     }
 
     private boolean checkGetter(CtMethod element) {
+        if(element.getBody()==null){
+            return false;
+        }
         if (element.getBody().getStatements().size() != 1) {
             return false;
         }
@@ -143,7 +146,9 @@ public class MethodProcessor {
     }
 
     private boolean checkSetter(CtMethod element) {
-
+        if(element.getBody()==null){
+            return false;
+        }
         if (element.getBody().getStatements().size() != 1) {
             return false;
         }

@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * Created by Geoffrey Hecht on 05/06/14.
  */
-public class ModelToGraph {
+public  class ModelToGraph {
     private GraphDatabaseService graphDatabaseService;
     private DatabaseManager databaseManager;
     private static final Label appLabel = DynamicLabel.label("App");

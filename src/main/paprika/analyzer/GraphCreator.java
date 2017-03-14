@@ -55,7 +55,7 @@ public class GraphCreator {
                 PaprikaClass parentClass = paprikaClass.getPaprikaApp().getPaprikaInternalClass(parentName);
                 paprikaClass.setParent(parentClass);
                 if (parentClass != null) {
-                    paprikaClass.addChild();
+                    parentClass.addChild();
                     paprikaClass.setParentName(null);
                 }
             }
