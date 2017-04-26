@@ -20,11 +20,6 @@
         </plugins>
     </build>
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>fr.inria.gforge.spoon</groupId>-->
-            <!--<artifactId>spoon-core</artifactId>-->
-            <!--<version>5.5.0</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-cypher</artifactId>
