@@ -24,7 +24,10 @@ public class Main {
         MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
         ModelToGraph modelToGraph=new ModelToGraph("/home/sarra/Paprika-BDD/databases/graph.db");
         modelToGraph.insertApp(MainProcessor.currentApp);
-//        showModel(MainProcessor.currentApp);
+    }
+
+    public static void addLibrary(PaprikaApp paprikaApp, String libraryString){
+        PaprikaLibrary.createPaprikaLibrary(libraryString,paprikaApp);
     }
 
     public static void showModel(PaprikaApp app) {

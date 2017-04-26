@@ -31,5 +31,6 @@ public enum RelationTypes implements RelationshipType {
     IMPLEMENTS,
     EXTENDS,
     CALLS,
-    USES
+    USES,
+    APP_USES_LIBRARY
 }

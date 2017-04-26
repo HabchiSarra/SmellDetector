@@ -40,6 +40,7 @@ public class PaprikaApp extends Entity{
     private String targetSdkVersion;
     private List<PaprikaClass> paprikaClasses;
     private List<PaprikaExternalClass> paprikaExternalClasses;
+    private ArrayList<PaprikaLibrary> paprikaLibraries;
 
     private PaprikaApp(String name, String key, String pack, String date, int size, String developer, String category, String price, double rating, String nbDownload, String versionCode,String versionName,String sdkVersion,String targetSdkVersion) {
         this.name = name;
@@ -58,6 +59,7 @@ public class PaprikaApp extends Entity{
         this.versionName = versionName;
         this.sdkVersion = sdkVersion;
         this.targetSdkVersion = targetSdkVersion;
+        this.paprikaLibraries = new ArrayList<>();
     }
 
     private PaprikaApp(String name, String key) {
@@ -176,5 +178,13 @@ public class PaprikaApp extends Entity{
             }
         }
         return null;
+    }
+
+    public void addPaprikaLibrary(PaprikaLibrary paprikaLibrary){
+        this.paprikaLibraries.add(paprikaLibrary);
+    }
+
+    public ArrayList<PaprikaLibrary> getPaprikaLibraries() {
+        return paprikaLibraries;
     }
 }

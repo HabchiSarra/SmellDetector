@@ -42,6 +42,7 @@ public  class ModelToGraph {
     private static final Label variableLabel = DynamicLabel.label("Variable");
     private static final Label argumentLabel = DynamicLabel.label("Argument");
     private static final Label externalArgumentLabel = DynamicLabel.label("ExternalArgument");
+    private static final Label libraryLabel = DynamicLabel.label("Library");
 
     private Map<Entity,Node> methodNodeMap;
     private Map<PaprikaClass,Node> classNodeMap;
@@ -67,21 +68,10 @@ public  class ModelToGraph {
             appNode = graphDatabaseService.createNode(appLabel);
             appNode.setProperty("app_key",key);
             appNode.setProperty("name",paprikaApp.getName());
-//            appNode.setProperty("category",paprikaApp.getCategory());
-//            appNode.setProperty("package",paprikaApp.getPack());
-//            appNode.setProperty("developer",paprikaApp.getDeveloper());
-//            appNode.setProperty("rating",paprikaApp.getRating());
-//            appNode.setProperty("nb_download",paprikaApp.getNbDownload());
-//            appNode.setProperty("date_download",paprikaApp.getDate());
-//            appNode.setProperty("version_code",paprikaApp.getVersionCode());
-//            appNode.setProperty("version_name",paprikaApp.getVersionName());
-//            appNode.setProperty("sdk",paprikaApp.getSdkVersion());
-//            appNode.setProperty("target_sdk",paprikaApp.getTargetSdkVersion());
             Date date = new Date();
             SimpleDateFormat  simpleFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss.S");
             appNode.setProperty("date_analysis", simpleFormat.format(date));
-//            appNode.setProperty("size",paprikaApp.getSize());
-//            appNode.setProperty("price",paprikaApp.getPrice());
+
             Node classNode;
             for(PaprikaClass paprikaClass : paprikaApp.getPaprikaClasses()){
                 classNode =insertClass(paprikaClass);
@@ -92,6 +82,10 @@ public  class ModelToGraph {
             }
             for(Metric metric : paprikaApp.getMetrics()){
                 insertMetric(metric, appNode);
+            }
+
+            for(PaprikaLibrary paprikaLibrary : paprikaApp.getPaprikaLibraries()){
+                appNode.createRelationshipTo(insertLibrary(paprikaLibrary),RelationTypes.APP_USES_LIBRARY);
             }
             tx.success();
         }
@@ -128,6 +122,13 @@ public  class ModelToGraph {
             insertMetric(metric,classNode);
         }
         return classNode;
+    }
+
+    public Node insertLibrary(PaprikaLibrary paprikaLibrary){
+        Node libraryNode= graphDatabaseService.createNode(libraryLabel);
+        libraryNode.setProperty("app_key",key);
+        libraryNode.setProperty("name",paprikaLibrary.getName());
+        return libraryNode;
     }
 
     public Node insertExternalClass(PaprikaExternalClass paprikaClass){
