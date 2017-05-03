@@ -27,6 +27,7 @@ public class Main {
         analyseParser.addArgument("-p", "--package").required(true).help("Application main package");
         analyseParser.addArgument("-k", "--key").required(true).help("sha256 of the apk used as identifier");
         analyseParser.addArgument("-d", "--dependencies").required(true).help("Path to dependencies");
+        analyseParser.addArgument("-l", "--libs").help("List of the external libs used by the apps (separated by :)");
 
         Subparser queryParser = subparsers.addParser("query").help("Query the database");
         queryParser.addArgument("-db", "--database").required(true).help("Path to neo4J Database folder");
@@ -61,11 +62,15 @@ public class Main {
         String key = arg.getString("key");
         String sdkPath = arg.getString("androidJar");
         String jarsPath =arg.getString("dependencies");
+        String[] libs = arg.getString("libs").split(":");
         MainProcessor mainProcessor = new MainProcessor(name, key, path, sdkPath, jarsPath);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();
         graphCreator.createCallGraph();
+        for(String lib : libs){
+            addLibrary(MainProcessor.currentApp,lib);
+        }
         MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
         ModelToGraph modelToGraph=new ModelToGraph(arg.getString("database"));
         modelToGraph.insertApp(MainProcessor.currentApp);
@@ -178,7 +183,7 @@ public class Main {
                 queryEngine.countViews();
                 break;
             case "NONFUZZY":
-                ARGB8888Query.createARGB8888Query(queryEngine).execute(details);
+                //ARGB8888Query.createARGB8888Query(queryEngine).execute(details);
                 IGSQuery.createIGSQuery(queryEngine).execute(details);
                 MIMQuery.createMIMQuery(queryEngine).execute(details);
                 LICQuery.createLICQuery(queryEngine).execute(details);
