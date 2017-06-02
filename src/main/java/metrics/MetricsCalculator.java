@@ -45,8 +45,8 @@ public class MetricsCalculator {
                 }else if (c.isAsyncTask()){
                     numberOfAsyncTasks++;
                 }
-                numberOfVariables =+ c.getPaprikaVariables().size();
-                numberOfMethods =+ c.getPaprikaMethods().size();
+                numberOfVariables += c.getPaprikaVariables().size();
+                numberOfMethods += c.getPaprikaMethods().size();
             }
             NumberOfInterfaces.createNumberOfInterfaces(app,numberOfInterfaces);
             NumberOfActivities.createNumberOfActivities(app,numberOfActivities);
