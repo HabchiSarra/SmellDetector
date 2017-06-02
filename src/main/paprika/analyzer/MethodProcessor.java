@@ -91,7 +91,7 @@ public class MethodProcessor {
             try {
                 return ctInvocation.getExecutable().getDeclaringType().getQualifiedName();
             } catch (NullPointerException nullPointerException) {
-                nullPointerException.printStackTrace();
+                System.out.println("Error message : "+nullPointerException.getLocalizedMessage());
             }
         }
         return null;
@@ -138,8 +138,15 @@ public class MethodProcessor {
         CtFieldRead returnedExpression = (CtFieldRead) retur.getReturnedExpression();
 
         CtType parent = element.getParent(CtType.class);
-        if (parent.equals(returnedExpression.getVariable().getDeclaration().getDeclaringType())) {
-            return true;
+        if(parent == null){
+            return false;
+        }
+        try {
+            if (parent.equals(returnedExpression.getVariable().getDeclaration().getDeclaringType())) {
+                return true;
+            }
+        }catch (NullPointerException npe){
+            System.out.println(npe.getLocalizedMessage());
         }
         return false;
 

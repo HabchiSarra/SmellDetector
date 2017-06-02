@@ -24,10 +24,11 @@ public class Main {
         analyseParser.addArgument("-a", "--androidJar").required(true).help("Path to android platform jar");
         analyseParser.addArgument("-db", "--database").required(true).help("Path to neo4J Database folder");
         analyseParser.addArgument("-n", "--name").required(true).help("Name of the application");
-        analyseParser.addArgument("-p", "--package").required(true).help("Application main package");
+        analyseParser.addArgument("-p", "--package").required(false).help("Application main package");
         analyseParser.addArgument("-k", "--key").required(true).help("sha256 of the apk used as identifier");
         analyseParser.addArgument("-d", "--dependencies").required(true).help("Path to dependencies");
         analyseParser.addArgument("-l", "--libs").help("List of the external libs used by the apps (separated by :)");
+        analyseParser.addArgument("-v", "--version").setDefault("").help("Version of the apps");
 
         Subparser queryParser = subparsers.addParser("query").help("Query the database");
         queryParser.addArgument("-db", "--database").required(true).help("Path to neo4J Database folder");
@@ -59,11 +60,12 @@ public class Main {
         System.out.println("Collecting metrics");
         String path = arg.getString("folder");
         String name = arg.getString("name");
+        String version = arg.getString("version");
         String key = arg.getString("key");
         String sdkPath = arg.getString("androidJar");
         String jarsPath =arg.getString("dependencies");
         String[] libs = arg.getString("libs").split(":");
-        MainProcessor mainProcessor = new MainProcessor(name, key, path, sdkPath, jarsPath);
+        MainProcessor mainProcessor = new MainProcessor(name, version, key, path, sdkPath, jarsPath);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();

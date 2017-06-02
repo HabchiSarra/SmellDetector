@@ -62,15 +62,17 @@ public class PaprikaApp extends Entity{
         this.paprikaLibraries = new ArrayList<>();
     }
 
-    private PaprikaApp(String name, String key) {
+    private PaprikaApp(String name, String version, String key) {
         this.name=name;
         this.key = key;
+        this.versionName = version;
         this.paprikaClasses = new ArrayList<>();
         this.paprikaExternalClasses = new ArrayList<>();
+        this.paprikaLibraries = new ArrayList<>();
     }
 
-    public static PaprikaApp createPaprikaApp(String name, String key){
-        return new PaprikaApp(name,key);
+    public static PaprikaApp createPaprikaApp(String name, String version, String key){
+        return new PaprikaApp(name,version,key);
     }
 
     public List<PaprikaExternalClass> getPaprikaExternalClasses() {
