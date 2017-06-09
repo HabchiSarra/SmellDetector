@@ -27,8 +27,8 @@ public class GraphCreator {
                 if (targetClass instanceof PaprikaClass) {
                     targetMethod = ((PaprikaClass) targetClass).getPaprikaMethod(invocationData.getMethod());
                 } else {
-                    //TODO get the return type
-                    targetMethod = PaprikaExternalMethod.createPaprikaExternalMethod(invocationData.getMethod(), "Uknown",
+
+                    targetMethod = PaprikaExternalMethod.createPaprikaExternalMethod(invocationData.getMethod(), invocationData.getType(),
                             (PaprikaExternalClass) targetClass);
                 }
                 paprikaMethod.callMethod(targetMethod);

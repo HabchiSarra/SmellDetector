@@ -74,12 +74,16 @@ public class MethodProcessor {
     private void handleInvocations(CtMethod ctMethod, PaprikaMethod paprikaMethod) {
         String targetName;
         String executable;
+        String type="Uknown";
         List<CtInvocation> invocations = ctMethod.getElements(new TypeFilter<CtInvocation>(CtInvocation.class));
         for (CtInvocation invocation : invocations) {
             targetName = getTarget(invocation);
             executable = invocation.getExecutable().getSimpleName();
+            if(invocation.getExecutable().getType()!=null){
+                type=invocation.getExecutable().getType().getQualifiedName();
+            }
             if (targetName != null) {
-                paprikaMethod.getInvocationData().add(new InvocationData(targetName, executable));
+                paprikaMethod.getInvocationData().add(new InvocationData(targetName, executable,type));
             }
         }
     }

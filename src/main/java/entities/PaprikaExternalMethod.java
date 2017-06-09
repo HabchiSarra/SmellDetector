@@ -18,8 +18,12 @@
 
 package entities;
 
+import org.neo4j.cypher.internal.frontend.v2_3.ast.functions.Str;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Geoffrey Hecht on 20/05/14.
@@ -28,6 +32,7 @@ public class PaprikaExternalMethod extends Entity{
     private PaprikaExternalClass paprikaExternalClass;
     private List<PaprikaExternalArgument> paprikaExternalArguments;
     private String returnType;
+    private static Map<String,PaprikaExternalMethod> externalMethods =new HashMap<>();
 
     public String getReturnType() {
         return returnType;
@@ -45,7 +50,13 @@ public class PaprikaExternalMethod extends Entity{
     }
 
     public static PaprikaExternalMethod createPaprikaExternalMethod(String name, String returnType,  PaprikaExternalClass paprikaClass) {
-        PaprikaExternalMethod paprikaMethod = new PaprikaExternalMethod(name, returnType, paprikaClass);
+        String fullName=name + "#" + paprikaClass;
+        PaprikaExternalMethod paprikaMethod;
+        if((paprikaMethod =externalMethods.get(fullName))!=null){
+            return paprikaMethod;
+        }
+        paprikaMethod = new PaprikaExternalMethod(name, returnType, paprikaClass);
+        externalMethods.put(fullName,paprikaMethod);
         paprikaClass.addPaprikaExternalMethod(paprikaMethod);
         return  paprikaMethod;
     }

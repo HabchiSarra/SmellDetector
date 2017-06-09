@@ -17,7 +17,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        //testRun();
+       // testRun();
         ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
         Subparsers subparsers = parser.addSubparsers().dest("sub_command");
         Subparser analyseParser = subparsers.addParser("analyse").help("Analyse an app");
