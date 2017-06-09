@@ -38,3 +38,6 @@ mainClassName = "analyzer.Main"
 
 
 apply plugin: "com.github.johnrengelman.shadow"
+shadowJar {
+    mergeServiceFiles()
+}
