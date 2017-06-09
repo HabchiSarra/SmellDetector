@@ -82,7 +82,7 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
             modifierText = ctField.getVisibility() == null ? "null" : ctField.getVisibility().toString();
             paprikaModifiers1 = DataConverter.convertTextToModifier(modifierText);
             if (paprikaModifiers1 == null) {
-                paprikaModifiers1 = PaprikaModifiers.PROTECTED;
+                paprikaModifiers1 = PaprikaModifiers.DEFAULT;
             }
             paprikaVariable=PaprikaVariable.createPaprikaVariable(ctField.getSimpleName(), ctField.getType().getQualifiedName(), paprikaModifiers1, paprikaClass);
             isStatic=false;
