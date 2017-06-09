@@ -17,59 +17,60 @@ public class Main {
 
 
     public static void main(String[] args) {
-        testRun();
-//        ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
-//        Subparsers subparsers = parser.addSubparsers().dest("sub_command");
-//        Subparser analyseParser = subparsers.addParser("analyse").help("Analyse an app");
-//        analyseParser.addArgument("folder").help("Path of the code source folder");
-//        analyseParser.addArgument("-a", "--androidJar").required(true).help("Path to android platform jar");
-//        analyseParser.addArgument("-db", "--database").required(true).help("Path to neo4J Database folder");
-//        analyseParser.addArgument("-n", "--name").required(true).help("Name of the application");
-//        analyseParser.addArgument("-p", "--package").required(false).help("Application main package");
-//        analyseParser.addArgument("-k", "--key").required(true).help("sha256 of the apk used as identifier");
-//        analyseParser.addArgument("-d", "--dependencies").required(true).help("Path to dependencies");
-//        analyseParser.addArgument("-l", "--libs").help("List of the external libs used by the apps (separated by :)");
-//        analyseParser.addArgument("-v", "--version").setDefault("").help("Version of the apps");
-//
-//        Subparser queryParser = subparsers.addParser("query").help("Query the database");
-//        queryParser.addArgument("-db", "--database").required(true).help("Path to neo4J Database folder");
-//        queryParser.addArgument("-r", "--request").help("Request to execute");
-//        queryParser.addArgument("-c", "--csv").help("path to register csv files").setDefault("");
-//        queryParser.addArgument("-dk", "--delKey").help("key to delete");
-//        queryParser.addArgument("-dp", "--delPackage").help("Package of the applications to delete");
-//        queryParser.addArgument("-d", "--details").type(Boolean.class).setDefault(false).help("Show the concerned entity in the results");
-//
-//        try {
-//            Namespace res = parser.parseArgs(args);
-//            if(res.getString("sub_command").equals("analyse")){
-//                runAnalysis(res);
-//            }
-//            else if(res.getString("sub_command").equals("query")){
-//                queryMode(res);
-//            }
-//        } catch (ArgumentParserException e) {
-//            analyseParser.handleError(e);
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        //testRun();
+        ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
+        Subparsers subparsers = parser.addSubparsers().dest("sub_command");
+        Subparser analyseParser = subparsers.addParser("analyse").help("Analyse an app");
+        analyseParser.addArgument("folder").help("Path of the code source folder");
+        analyseParser.addArgument("-a", "--androidJar").required(true).help("Path to android platform jar");
+        analyseParser.addArgument("-db", "--database").required(true).help("Path to neo4J Database folder");
+        analyseParser.addArgument("-n", "--name").required(true).help("Name of the application");
+        analyseParser.addArgument("-p", "--package").required(false).help("Application main package");
+        analyseParser.addArgument("-k", "--key").required(true).help("sha256 of the apk used as identifier");
+        analyseParser.addArgument("-d", "--dependencies").required(true).help("Path to dependencies");
+        analyseParser.addArgument("-l", "--libs").help("List of the external libs used by the apps (separated by :)");
+        analyseParser.addArgument("-v", "--version").required(true).help("Version of the apps");
+
+        Subparser queryParser = subparsers.addParser("query").help("Query the database");
+        queryParser.addArgument("-db", "--database").required(true).help("Path to neo4J Database folder");
+        queryParser.addArgument("-r", "--request").help("Request to execute");
+        queryParser.addArgument("-c", "--csv").help("path to register csv files").setDefault("");
+        queryParser.addArgument("-dk", "--delKey").help("key to delete");
+        queryParser.addArgument("-dp", "--delPackage").help("Package of the applications to delete");
+        queryParser.addArgument("-d", "--details").type(Boolean.class).setDefault(false).help("Show the concerned entity in the results");
+
+        try {
+            Namespace res = parser.parseArgs(args);
+            if(res.getString("sub_command").equals("analyse")){
+                runAnalysis(res);
+            }
+            else if(res.getString("sub_command").equals("query")){
+                queryMode(res);
+            }
+        } catch (ArgumentParserException e) {
+            analyseParser.handleError(e);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
 
     public static void testRun() {
-        String path = "/home/sarra/Android-Projects/DuckDuckGo-Recursive/Android/app/src/main/java/com/duckduckgo/mobile/android";
-        String name = "DuckDuckGo";
-        String key = "DuckDuckGo";
-        String sdkPath = "/home/sarra/Android/Sdk/platforms/android-23/android.jar";
-        String jarsPath = "/home/sarra/Android-Projects/DuckDuckGo-Recursive/Android/app/runtime";
-        MainProcessor mainProcessor = new MainProcessor(name, key,key, path, sdkPath, jarsPath);
+        String path = "/home/sarra/Desktop/ASE-Downloads/TestProject/kdeconnect/src";
+        String name = "KDEConnect";
+        String key = "ce5d2c8394474178c1935f122fee941ae5b47fe7";
+        String version ="1";
+        String sdkPath = "/home/sarra/Android/Sdk/platforms/android-22/android.jar";
+        String jarsPath =  "/home/sarra/Desktop/ASE-Downloads/TestProject/kdeconnect/dependencies";
+        MainProcessor mainProcessor = new MainProcessor(name, version,key, path, sdkPath, jarsPath);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();
         graphCreator.createCallGraph();
         MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
-        ModelToGraph modelToGraph=new ModelToGraph("/home/sarra/Paprika-BDD/databases/graph.db");
+        ModelToGraph modelToGraph=new ModelToGraph("/home/sarra/Desktop/ASE-Downloads/TestProject/databases/graph.db");
         modelToGraph.insertApp(MainProcessor.currentApp);
 
     }
@@ -88,8 +89,11 @@ public class Main {
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();
         graphCreator.createCallGraph();
-        for(String lib : libs){
-            addLibrary(MainProcessor.currentApp,lib);
+        if(libs !=null)
+        {
+            for(String lib : libs){
+                addLibrary(MainProcessor.currentApp,lib);
+            }
         }
         MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
         ModelToGraph modelToGraph=new ModelToGraph(arg.getString("database"));

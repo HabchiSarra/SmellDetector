@@ -51,12 +51,19 @@ public class ConstructorProcessor {
         List<CtFieldAccess> elements = ctConstructor.getElements(new TypeFilter<CtFieldAccess>(CtFieldAccess.class));
         String variableTarget = null;
         String variableName;
+
+
         for (CtFieldAccess ctFieldAccess : elements) {
             if (ctFieldAccess.getTarget() != null && ctFieldAccess.getTarget().getType() != null) {
-                variableTarget = ctFieldAccess.getTarget().getType().getQualifiedName();
+                if(ctFieldAccess.getTarget().getType().getDeclaration() == ctConstructor.getDeclaringType()){
+                    variableTarget = ctFieldAccess.getTarget().getType().getQualifiedName();
+                    variableName = ctFieldAccess.getVariable().getSimpleName();
+                    paprikaMethod.getUsedVariablesData().add(new VariableData(variableTarget, variableName));
+                }
+
             }
-            variableName = ctFieldAccess.getVariable().getSimpleName();
-            paprikaMethod.getUsedVariablesData().add(new VariableData(variableTarget, variableName));
+
+
         }
 
     }

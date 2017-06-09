@@ -1,8 +1,21 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.0"
+    }
+}
+
 group 'paprika'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 
 repositories {
     mavenCentral()
@@ -22,3 +35,6 @@ apply plugin: 'application'
 mainClassName = "analyzer.Main"
 
 
+
+
+apply plugin: "com.github.johnrengelman.shadow"

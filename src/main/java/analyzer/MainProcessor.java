@@ -60,6 +60,9 @@ public class MainProcessor {
 
     public ArrayList<URL> listFilesForFolder(final File folder) throws IOException {
         ArrayList<URL> jars = new ArrayList<>();
+        if(folder.listFiles()==null){
+            return jars;
+        }
         for (final File fileEntry : folder.listFiles()) {
 
             jars.add(fileEntry.toURI().toURL());

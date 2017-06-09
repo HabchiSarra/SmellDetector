@@ -51,6 +51,7 @@ public  class ModelToGraph {
             appNode = graphDatabaseService.createNode(appLabel);
             appNode.setProperty("app_key",key);
             appNode.setProperty("name",paprikaApp.getName());
+            appNode.setProperty("version",paprikaApp.getVersionName());
             Date date = new Date();
             SimpleDateFormat  simpleFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss.S");
             appNode.setProperty("date_analysis", simpleFormat.format(date));
@@ -156,9 +157,13 @@ public  class ModelToGraph {
         }
         Node variableNode;
         for(PaprikaVariable paprikaVariable : paprikaMethod.getUsedVariables()){
-
                 variableNode = variableNodeMap.get(paprikaVariable);
-                methodNode.createRelationshipTo(variableNode, RelationTypes.USES);
+                if(variableNode!=null)
+                {
+                    methodNode.createRelationshipTo(variableNode, RelationTypes.USES);
+                }else{
+                    System.out.println("problem");
+                }
 
         }
         for(PaprikaArgument arg : paprikaMethod.getArguments()){
