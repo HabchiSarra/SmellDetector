@@ -35,7 +35,7 @@ public class MethodProcessor {
             position++;
         }
         int numberOfDeclaredLocals = ctMethod.getElements(new TypeFilter<CtLocalVariable>(CtLocalVariable.class)).size();
-        paprikaMethod.setNumberOfLines(ctMethod.getPosition().getSourceEnd() - ctMethod.getPosition().getSourceStart());
+        paprikaMethod.setNumberOfLines(countEffectiveCodeLines(ctMethod));
         handleUsedVariables(ctMethod, paprikaMethod);
         handleInvocations(ctMethod, paprikaMethod);
         paprikaMethod.setComplexity(getComplexity(ctMethod));
@@ -48,6 +48,10 @@ public class MethodProcessor {
                 break;
             }
         }
+    }
+
+    private int countEffectiveCodeLines(CtMethod ctMethod) {
+        return ctMethod.getBody().toString().split("\n").length;
     }
 
     private void handleUsedVariables(CtMethod ctMethod, PaprikaMethod paprikaMethod) {
