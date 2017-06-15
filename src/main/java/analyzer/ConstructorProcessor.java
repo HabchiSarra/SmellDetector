@@ -48,7 +48,12 @@ public class ConstructorProcessor {
     }
 
     private int countEffectiveCodeLines(CtConstructor ctMethod) {
-        return ctMethod.getBody().toString().split("\n").length;
+        try {
+            return ctMethod.getBody().toString().split("\n").length;
+        }catch (NullPointerException npe){
+            return ctMethod.getPosition().getEndLine()-ctMethod.getPosition().getLine();
+        }
+
     }
 
     private void handleUsedVariables(CtConstructor ctConstructor, PaprikaMethod paprikaMethod) {

@@ -51,7 +51,12 @@ public class MethodProcessor {
     }
 
     private int countEffectiveCodeLines(CtMethod ctMethod) {
-        return ctMethod.getBody().toString().split("\n").length;
+        try {
+            return ctMethod.getBody().toString().split("\n").length;
+        }catch (NullPointerException npe){
+            return ctMethod.getPosition().getEndLine()-ctMethod.getPosition().getLine();
+        }
+
     }
 
     private void handleUsedVariables(CtMethod ctMethod, PaprikaMethod paprikaMethod) {
