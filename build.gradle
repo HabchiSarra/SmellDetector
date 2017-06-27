@@ -19,12 +19,15 @@ targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://spoon.gforge.inria.fr/repositories/snapshots/"
+    }
 }
 
 
 
 dependencies {
-    compile "fr.inria.gforge.spoon:spoon-core:5.6.0"
+    compile "fr.inria.gforge.spoon:spoon-core:5.8.0-SNAPSHOT"
     compile "org.neo4j:neo4j-cypher:3.1.0"
     compile "net.sourceforge.argparse4j:argparse4j:0.7.0"
     compile fileTree(dir: 'libs', include: '*.jar')
