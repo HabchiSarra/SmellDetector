@@ -156,9 +156,9 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
                         myRealClass = myRealClass.getSuperclass();
                     }
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    System.err.println("Class Not Found; message : "+ e.getLocalizedMessage());
                 } catch (NoClassDefFoundError e) {
-                    e.printStackTrace();
+                    System.err.println("No Class Def Found : "+ e.getLocalizedMessage());
                 }
             }
         }

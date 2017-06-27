@@ -32,7 +32,7 @@ public  class ModelToGraph {
     private Map<PaprikaVariable,Node> variableNodeMap;
 
     private String key;
-
+    private String appName;
     public ModelToGraph(String DatabasePath){
         this.databaseManager = new DatabaseManager(DatabasePath);
         databaseManager.start();
@@ -46,15 +46,17 @@ public  class ModelToGraph {
 
     public Node insertApp(PaprikaApp paprikaApp){
         this.key = paprikaApp.getKey();
+        this.appName= paprikaApp.getName();
         Node appNode;
         try ( Transaction tx = graphDatabaseService.beginTx() ){
             appNode = graphDatabaseService.createNode(appLabel);
             appNode.setProperty("app_key",key);
-            appNode.setProperty("name",paprikaApp.getName());
+            appNode.setProperty("name",appName);
             appNode.setProperty("version",paprikaApp.getVersionName());
             Date date = new Date();
             SimpleDateFormat  simpleFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss.S");
             appNode.setProperty("date_analysis", simpleFormat.format(date));
+            appNode.setProperty("path",paprikaApp.getPath());
 
             Node classNode;
             for(PaprikaClass paprikaClass : paprikaApp.getPaprikaClasses()){
@@ -92,6 +94,7 @@ public  class ModelToGraph {
         classNode.setProperty("app_key",key);
         classNode.setProperty("name",paprikaClass.getName());
         classNode.setProperty("modifier", paprikaClass.getModifier().toString().toLowerCase());
+        classNode.setProperty("app_name",appName);
         if(paprikaClass.getParentName() != null){
             classNode.setProperty("parent_name", paprikaClass.getParentName());
         }
@@ -112,6 +115,7 @@ public  class ModelToGraph {
         Node libraryNode= graphDatabaseService.createNode(libraryLabel);
         libraryNode.setProperty("app_key",key);
         libraryNode.setProperty("name",paprikaLibrary.getName());
+        libraryNode.setProperty("app_name",appName);
         return libraryNode;
     }
 
@@ -119,6 +123,7 @@ public  class ModelToGraph {
         Node classNode = graphDatabaseService.createNode(externalClassLabel);
         classNode.setProperty("app_key",key);
         classNode.setProperty("name",paprikaClass.getName());
+        classNode.setProperty("app_name",appName);
         if(paprikaClass.getParentName() != null){
             classNode.setProperty("parent_name", paprikaClass.getParentName());
         }
@@ -138,6 +143,7 @@ public  class ModelToGraph {
         variableNode.setProperty("name", paprikaVariable.getName());
         variableNode.setProperty("modifier", paprikaVariable.getModifier().toString().toLowerCase());
         variableNode.setProperty("type", paprikaVariable.getType());
+        variableNode.setProperty("app_name",appName);
         for(Metric metric : paprikaVariable.getMetrics()){
             insertMetric(metric, variableNode);
         }
@@ -151,7 +157,9 @@ public  class ModelToGraph {
         methodNode.setProperty("name",paprikaMethod.getName());
         methodNode.setProperty("modifier", paprikaMethod.getModifier().toString().toLowerCase());
         methodNode.setProperty("full_name",paprikaMethod.toString());
+        methodNode.setProperty("app_name",appName);
         methodNode.setProperty("return_type",paprikaMethod.getReturnType());
+
         for(Metric metric : paprikaMethod.getMetrics()){
             insertMetric(metric, methodNode);
         }
@@ -179,6 +187,7 @@ public  class ModelToGraph {
         methodNode.setProperty("name",paprikaMethod.getName());
         methodNode.setProperty("full_name",paprikaMethod.toString());
         methodNode.setProperty("return_type",paprikaMethod.getReturnType());
+        methodNode.setProperty("app_name",appName);
         for(Metric metric : paprikaMethod.getMetrics()){
             insertMetric(metric, methodNode);
         }
@@ -193,6 +202,7 @@ public  class ModelToGraph {
         argNode.setProperty("app_key", key);
         argNode.setProperty("name", paprikaArgument.getName());
         argNode.setProperty("position", paprikaArgument.getPosition());
+        argNode.setProperty("app_name",appName);
         return argNode;
     }
 
@@ -201,6 +211,7 @@ public  class ModelToGraph {
         argNode.setProperty("app_key", key);
         argNode.setProperty("name", paprikaExternalArgument.getName());
         argNode.setProperty("position", paprikaExternalArgument.getPosition());
+        argNode.setProperty("app_name",appName);
         for(Metric metric : paprikaExternalArgument.getMetrics()){
             insertMetric(metric, argNode);
         }

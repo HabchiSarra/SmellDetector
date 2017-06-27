@@ -20,6 +20,7 @@ public class PaprikaApp extends Entity{
     private String versionName;
     private String sdkVersion;
     private String targetSdkVersion;
+    private String path;
     private List<PaprikaClass> paprikaClasses;
     private List<PaprikaExternalClass> paprikaExternalClasses;
     private ArrayList<PaprikaLibrary> paprikaLibraries;
@@ -44,17 +45,18 @@ public class PaprikaApp extends Entity{
         this.paprikaLibraries = new ArrayList<>();
     }
 
-    private PaprikaApp(String name, String version, String key) {
+    private PaprikaApp(String name, String version, String key, String path) {
         this.name=name;
         this.key = key;
         this.versionName = version;
         this.paprikaClasses = new ArrayList<>();
         this.paprikaExternalClasses = new ArrayList<>();
         this.paprikaLibraries = new ArrayList<>();
+        this.path =path;
     }
 
-    public static PaprikaApp createPaprikaApp(String name, String version, String key){
-        return new PaprikaApp(name,version,key);
+    public static PaprikaApp createPaprikaApp(String name, String version, String key, String path){
+        return new PaprikaApp(name,version,key, path);
     }
 
     public List<PaprikaExternalClass> getPaprikaExternalClasses() {
@@ -170,5 +172,13 @@ public class PaprikaApp extends Entity{
 
     public ArrayList<PaprikaLibrary> getPaprikaLibraries() {
         return paprikaLibraries;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
