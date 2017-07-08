@@ -52,9 +52,11 @@ public  class ModelToGraph {
             appNode = graphDatabaseService.createNode(appLabel);
             appNode.setProperty("app_key",key);
             appNode.setProperty("name",appName);
-            appNode.setProperty("version",paprikaApp.getVersionName());
+            appNode.setProperty("version",paprikaApp.getVersion());
+            appNode.setProperty("commit_number", paprikaApp.getCommitNumber());
+            appNode.setProperty("commit_status",paprikaApp.getStatus());
             Date date = new Date();
-            SimpleDateFormat  simpleFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss.S");
+            SimpleDateFormat  simpleFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
             appNode.setProperty("date_analysis", simpleFormat.format(date));
             appNode.setProperty("path",paprikaApp.getPath());
 

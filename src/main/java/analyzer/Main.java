@@ -17,7 +17,6 @@ public class Main {
 
 
     public static void main(String[] args) {
-       // testRun();
         ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
         Subparsers subparsers = parser.addSubparsers().dest("sub_command");
         Subparser analyseParser = subparsers.addParser("analyse").help("Analyse an app");
@@ -30,6 +29,8 @@ public class Main {
         analyseParser.addArgument("-d", "--dependencies").required(true).help("Path to dependencies");
         analyseParser.addArgument("-l", "--libs").help("List of the external libs used by the apps (separated by :)");
         analyseParser.addArgument("-v", "--version").required(true).help("Version of the apps");
+        analyseParser.addArgument("-cn", "--commitNumber").required(true).help("Real commit number");
+        analyseParser.addArgument("-s", "--status").required(true).help("Commit status");
 
         Subparser queryParser = subparsers.addParser("query").help("Query the database");
         queryParser.addArgument("-db", "--database").required(true).help("Path to neo4J Database folder");
@@ -58,13 +59,15 @@ public class Main {
     }
 
     public static void testRun() {
-        String path = "/home/sarra/Desktop/ASE-Downloads/TestProject/kdeconnect/src";
+        String path = "/home/sarra/Desktop/ASE-Downloads/KDE_connect/src";
         String name = "KDEConnect";
-        String key = "ce5d2c8394474178c1935f122fee941ae5b47fe7";
-        String version ="1";
+        String key = "YOO";
+        int version =1;
+        int commitNumber =1;
+        String status="Built";
         String sdkPath = "/home/sarra/Android/Sdk/platforms/android-22/android.jar";
-        String jarsPath =  "/home/sarra/Desktop/ASE-Downloads/TestProject/kdeconnect/dependencies";
-        MainProcessor mainProcessor = new MainProcessor(name, version,key, path, sdkPath, jarsPath);
+        String jarsPath =  "/home/sarra/Desktop/ASE-Downloads/TestProject/KDE_connect/dependencies";
+        MainProcessor mainProcessor = new MainProcessor(name, version,commitNumber, status, key, path, sdkPath, jarsPath);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();
@@ -79,12 +82,14 @@ public class Main {
         System.out.println("Collecting metrics");
         String path = arg.getString("folder");
         String name = arg.getString("name");
-        String version = arg.getString("version");
+        int version = arg.getInt("version");
         String key = arg.getString("key");
         String sdkPath = arg.getString("androidJar");
         String jarsPath =arg.getString("dependencies");
+        int commitNumber = arg.getInt("commitNumber");
+        String status =arg.getString("status");
         String[] libs = arg.getString("libs").split(":");
-        MainProcessor mainProcessor = new MainProcessor(name, version, key, path, sdkPath, jarsPath);
+        MainProcessor mainProcessor = new MainProcessor(name, version,commitNumber, status, key, path, sdkPath, jarsPath);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();

@@ -104,7 +104,7 @@ public class MethodProcessor {
             try {
                 return ctInvocation.getExecutable().getDeclaringType().getQualifiedName();
             } catch (NullPointerException nullPointerException) {
-                System.out.println("Error message : "+nullPointerException.getLocalizedMessage());
+                System.err.println("Error message : "+nullPointerException.getMessage());
             }
         }
         return null;

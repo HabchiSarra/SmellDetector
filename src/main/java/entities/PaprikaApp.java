@@ -17,7 +17,9 @@ public class PaprikaApp extends Entity{
     private String key;
     private String nbDownload;
     private String versionCode;
-    private String versionName;
+    private int version;
+    private int commitNumber;
+    private String status;
     private String sdkVersion;
     private String targetSdkVersion;
     private String path;
@@ -25,7 +27,7 @@ public class PaprikaApp extends Entity{
     private List<PaprikaExternalClass> paprikaExternalClasses;
     private ArrayList<PaprikaLibrary> paprikaLibraries;
 
-    private PaprikaApp(String name, String key, String pack, String date, int size, String developer, String category, String price, double rating, String nbDownload, String versionCode,String versionName,String sdkVersion,String targetSdkVersion) {
+    private PaprikaApp(String name, String key, String pack, String date, int size, String developer, String category, String price, double rating, String nbDownload, String versionCode,int version,String sdkVersion,String targetSdkVersion) {
         this.name = name;
         this.key = key;
         this.pack = pack;
@@ -39,24 +41,26 @@ public class PaprikaApp extends Entity{
         this.paprikaClasses = new ArrayList<>();
         this.paprikaExternalClasses = new ArrayList<>();
         this.versionCode = versionCode;
-        this.versionName = versionName;
+        this.version = version;
         this.sdkVersion = sdkVersion;
         this.targetSdkVersion = targetSdkVersion;
         this.paprikaLibraries = new ArrayList<>();
     }
 
-    private PaprikaApp(String name, String version, String key, String path) {
+    private PaprikaApp(String name, int version, int commitNumber, String status, String key, String path) {
         this.name=name;
         this.key = key;
-        this.versionName = version;
+        this.version = version;
         this.paprikaClasses = new ArrayList<>();
         this.paprikaExternalClasses = new ArrayList<>();
         this.paprikaLibraries = new ArrayList<>();
         this.path =path;
+        this.commitNumber =commitNumber;
+        this.status =status;
     }
 
-    public static PaprikaApp createPaprikaApp(String name, String version, String key, String path){
-        return new PaprikaApp(name,version,key, path);
+    public static PaprikaApp createPaprikaApp(String name, int version, int commitNumber, String status, String key, String path){
+        return new PaprikaApp(name,version, commitNumber, status, key, path);
     }
 
     public List<PaprikaExternalClass> getPaprikaExternalClasses() {
@@ -77,8 +81,8 @@ public class PaprikaApp extends Entity{
         paprikaClasses.add(paprikaClass);
     }
 
-    public static PaprikaApp createPaprikaApp(String name, String key, String pack, String date, int size, String dev, String cat, String price, double rating, String nbDownload, String versionCode,String versionName,String sdkVersion,String targetSdkVersion) {
-        return new PaprikaApp(name,key,pack,date,size,dev,cat,price,rating,nbDownload,versionCode,versionName,sdkVersion,targetSdkVersion);
+    public static PaprikaApp createPaprikaApp(String name, String key, String pack, String date, int size, String dev, String cat, String price, double rating, String nbDownload, String versionCode,int version,String sdkVersion,String targetSdkVersion) {
+        return new PaprikaApp(name,key,pack,date,size,dev,cat,price,rating,nbDownload,versionCode,version,sdkVersion,targetSdkVersion);
     }
 
     public double getRating() {
@@ -121,8 +125,8 @@ public class PaprikaApp extends Entity{
         return versionCode;
     }
 
-    public String getVersionName() {
-        return versionName;
+    public int getVersion() {
+        return version;
     }
 
     public String getSdkVersion() {
@@ -166,6 +170,8 @@ public class PaprikaApp extends Entity{
         return null;
     }
 
+
+
     public void addPaprikaLibrary(PaprikaLibrary paprikaLibrary){
         this.paprikaLibraries.add(paprikaLibrary);
     }
@@ -180,5 +186,13 @@ public class PaprikaApp extends Entity{
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public int getCommitNumber() {
+        return commitNumber;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }
