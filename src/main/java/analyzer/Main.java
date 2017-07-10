@@ -82,11 +82,11 @@ public class Main {
         System.out.println("Collecting metrics");
         String path = arg.getString("folder");
         String name = arg.getString("name");
-        int version = arg.getInt("version");
+        int version = Integer.valueOf(arg.getString("version"));
         String key = arg.getString("key");
         String sdkPath = arg.getString("androidJar");
         String jarsPath =arg.getString("dependencies");
-        int commitNumber = arg.getInt("commitNumber");
+        int commitNumber = Integer.valueOf(arg.getString("commitNumber"));
         String status =arg.getString("status");
         String[] libs = arg.getString("libs").split(":");
         MainProcessor mainProcessor = new MainProcessor(name, version,commitNumber, status, key, path, sdkPath, jarsPath);
