@@ -87,7 +87,7 @@ public class MetricsCalculator {
             }else if (paprikaClass.isApplication()){
                 IsApplication.createIsApplication(paprikaClass,true);
             }
-
+            NumberOfAttributes.createNumberOfAttributes(paprikaClass,paprikaClass.getPaprikaVariables().size());
             NumberOfMethods.createNumberOfMethods(paprikaClass, paprikaClass.getPaprikaMethods().size());
             NumberOfImplementedInterfaces.createNumberOfImplementedInterfaces(paprikaClass,
                     paprikaClass.getInterfacesNames().size());
