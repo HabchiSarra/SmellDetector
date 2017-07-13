@@ -6,6 +6,7 @@ import metrics.MetricsCalculator;
 import neo4j.*;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.*;
+import scala.collection.mutable.ArrayLike$class;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -88,7 +89,11 @@ public class Main {
         String jarsPath =arg.getString("dependencies");
         int commitNumber = Integer.valueOf(arg.getString("commitNumber"));
         String status =arg.getString("status");
-        String[] libs = arg.getString("libs").split(":");
+        String[] libs = {};
+        if(arg.getString("libs") != null)
+        {
+            libs = arg.getString("libs").split(":");
+        }
         MainProcessor mainProcessor = new MainProcessor(name, version,commitNumber, status, key, path, sdkPath, jarsPath);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
@@ -97,7 +102,10 @@ public class Main {
         if(libs !=null)
         {
             for(String lib : libs){
-                addLibrary(MainProcessor.currentApp,lib);
+                if(lib != "")
+                {
+                    addLibrary(MainProcessor.currentApp,lib);
+                }
             }
         }
         MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
