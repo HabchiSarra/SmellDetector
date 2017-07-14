@@ -3,9 +3,21 @@ package analyzer;
 import entities.PaprikaArgument;
 import entities.PaprikaMethod;
 import entities.PaprikaModifiers;
-import spoon.reflect.code.*;
+import spoon.reflect.code.BinaryOperatorKind;
+import spoon.reflect.code.CtBinaryOperator;
+import spoon.reflect.code.CtBreak;
+import spoon.reflect.code.CtCase;
+import spoon.reflect.code.CtCatch;
+import spoon.reflect.code.CtConditional;
+import spoon.reflect.code.CtContinue;
+import spoon.reflect.code.CtFieldAccess;
+import spoon.reflect.code.CtIf;
+import spoon.reflect.code.CtInvocation;
+import spoon.reflect.code.CtLocalVariable;
+import spoon.reflect.code.CtLoop;
+import spoon.reflect.code.CtReturn;
+import spoon.reflect.code.CtThrow;
 import spoon.reflect.declaration.CtConstructor;
-import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.visitor.filter.TypeFilter;
 
@@ -50,8 +62,8 @@ public class ConstructorProcessor {
     private int countEffectiveCodeLines(CtConstructor ctMethod) {
         try {
             return ctMethod.getBody().toString().split("\n").length;
-        }catch (NullPointerException npe){
-            return ctMethod.getPosition().getEndLine()-ctMethod.getPosition().getLine();
+        } catch (NullPointerException npe) {
+            return ctMethod.getPosition().getEndLine() - ctMethod.getPosition().getLine();
         }
 
     }
@@ -64,7 +76,7 @@ public class ConstructorProcessor {
 
         for (CtFieldAccess ctFieldAccess : elements) {
             if (ctFieldAccess.getTarget() != null && ctFieldAccess.getTarget().getType() != null) {
-                if(ctFieldAccess.getTarget().getType().getDeclaration() == ctConstructor.getDeclaringType()){
+                if (ctFieldAccess.getTarget().getType().getDeclaration() == ctConstructor.getDeclaringType()) {
                     variableTarget = ctFieldAccess.getTarget().getType().getQualifiedName();
                     variableName = ctFieldAccess.getVariable().getSimpleName();
                     paprikaMethod.getUsedVariablesData().add(new VariableData(variableTarget, variableName));
@@ -80,16 +92,16 @@ public class ConstructorProcessor {
     private void handleInvocations(CtConstructor ctConstructor, PaprikaMethod paprikaMethod) {
         String targetName;
         String executable;
-        String type="Uknown";
+        String type = "Uknown";
         List<CtInvocation> invocations = ctConstructor.getElements(new TypeFilter<CtInvocation>(CtInvocation.class));
         for (CtInvocation invocation : invocations) {
             targetName = getTarget(invocation);
             executable = invocation.getExecutable().getSimpleName();
-            if(invocation.getExecutable().getType()!=null){
-                type=invocation.getExecutable().getType().getQualifiedName();
+            if (invocation.getExecutable().getType() != null) {
+                type = invocation.getExecutable().getType().getQualifiedName();
             }
             if (targetName != null) {
-                paprikaMethod.getInvocationData().add(new InvocationData(targetName, executable,type));
+                paprikaMethod.getInvocationData().add(new InvocationData(targetName, executable, type));
             }
         }
     }
@@ -101,7 +113,7 @@ public class ConstructorProcessor {
             try {
                 return ctInvocation.getExecutable().getDeclaringType().getQualifiedName();
             } catch (NullPointerException nullPointerException) {
-                nullPointerException.printStackTrace();
+                System.err.println("Could not find qualified name for target: " + ctInvocation.toString() + "(" + nullPointerException.getMessage() + ")");
             }
         }
         return null;

@@ -49,8 +49,6 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
             paprikaClass.setInnerClass(true);
         }
         processMethods(ctClass);
-
-
     }
 
     public void processMethods(CtClass ctClass) {
@@ -121,6 +119,7 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
             Class myRealClass;
             CtTypeReference reference = null;
             while (myClass != null) {
+                // FIXME: break is superclass.equals(class)!!
                 doi++;
                 if (myClass.getSuperclass() != null) {
                     reference = myClass.getSuperclass();
