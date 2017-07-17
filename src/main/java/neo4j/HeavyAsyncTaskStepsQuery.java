@@ -52,7 +52,7 @@ public class HeavyAsyncTaskStepsQuery extends FuzzyQuery{
     public void execute(boolean details) throws CypherException, IOException {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (c:Class{parent_name:'android.os.AsyncTask'})-[:CLASS_OWNS_METHOD]->(m:Method) WHERE (m.name='onPreExecute' OR m.name='onProgressUpdate' OR m.name='onPostExecute') AND  m.number_of_instructions >"+veryHigh_noi+" AND m.cyclomatic_complexity > "+veryHigh_cc+" return m.app_key as app_key";
+            String query = "MATCH (c:Class{is_async_task:true})-[:CLASS_OWNS_METHOD]->(m:Method) WHERE (m.name='onPreExecute' OR m.name='onProgressUpdate' OR m.name='onPostExecute') AND  m.number_of_instructions >"+veryHigh_noi+" AND m.cyclomatic_complexity > "+veryHigh_cc+" return m.app_key as app_key";
             if(details){
                 query += ",m.full_name as full_name";
             }else{
@@ -66,7 +66,7 @@ public class HeavyAsyncTaskStepsQuery extends FuzzyQuery{
     public void executeFuzzy(boolean details) throws CypherException, IOException {
             Result result;
             try (Transaction ignored = graphDatabaseService.beginTx()) {
-                String query = "MATCH (c:Class{parent_name:'android.os.AsyncTask'})-[:CLASS_OWNS_METHOD]->(m:Method) WHERE (m.name='onPreExecute' OR m.name='onProgressUpdate' OR m.name='onPostExecute') AND  m.number_of_instructions >"+high_noi+" AND m.cyclomatic_complexity > "+high_cc+" return m.app_key as app_key,m.cyclomatic_complexity as cyclomatic_complexity, m.number_of_instructions as number_of_instructions";
+                String query = "MATCH (c:Class{is_async_task:true})-[:CLASS_OWNS_METHOD]->(m:Method) WHERE (m.name='onPreExecute' OR m.name='onProgressUpdate' OR m.name='onPostExecute') AND  m.number_of_instructions >"+high_noi+" AND m.cyclomatic_complexity > "+high_cc+" return m.app_key as app_key,m.cyclomatic_complexity as cyclomatic_complexity, m.number_of_instructions as number_of_instructions";
                 if(details){
                     query += ",m.full_name as full_name";
                 }

@@ -326,7 +326,7 @@ public class QueryEngine {
     public void countAsyncClasses() throws CypherException, IOException {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            result = graphDatabaseService.execute("MATCH (n:Class{parent_name:'android.os.AsyncTask'}) return n.app_key as app_key,count(n) as number_of_async");
+            result = graphDatabaseService.execute("MATCH (n:Class{is_async_task:true}) return n.app_key as app_key,count(n) as number_of_async");
             resultToCSV(result,"_COUNT_ASYNC.csv");
         }
     }
@@ -334,7 +334,7 @@ public class QueryEngine {
     public void countViews() throws CypherException, IOException {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            result = graphDatabaseService.execute("MATCH (n:Class{parent_name:'android.view.View'}) return n.app_key as app_key,count(n) as number_of_views");
+            result = graphDatabaseService.execute("MATCH (n:Class{is_view:true}) return n.app_key as app_key,count(n) as number_of_views");
             resultToCSV(result,"_COUNT_VIEWS.csv");
         }
     }
