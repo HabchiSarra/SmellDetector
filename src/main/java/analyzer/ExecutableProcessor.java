@@ -4,10 +4,7 @@ import entities.PaprikaArgument;
 import entities.PaprikaMethod;
 import entities.PaprikaModifiers;
 import spoon.reflect.code.*;
-import spoon.reflect.declaration.CtExecutable;
-import spoon.reflect.declaration.CtModifiable;
-import spoon.reflect.declaration.CtParameter;
-import spoon.reflect.declaration.CtTypeMember;
+import spoon.reflect.declaration.*;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.util.Arrays;
@@ -87,8 +84,9 @@ public abstract class ExecutableProcessor<T extends CtExecutable> {
         if (paprikaMethod.getName().equals("getExtraHeaders")) {
             System.out.println("BLOP!");
         }
-        List<CtInvocation> invocations = ctConstructor.getElements(new TypeFilter<CtInvocation>(CtInvocation.class));
-        for (CtInvocation invocation : invocations) {
+        // Thanks to spoon we have to use a CtAbstractInvocation
+        List<CtAbstractInvocation> invocations = ctConstructor.getElements(new TypeFilter<>(CtAbstractInvocation.class));
+        for (CtAbstractInvocation invocation : invocations) {
             targetName = getTarget(invocation);
             executable = invocation.getExecutable().getSimpleName();
             if (invocation.getExecutable().getType() != null) {
@@ -100,14 +98,16 @@ public abstract class ExecutableProcessor<T extends CtExecutable> {
         }
     }
 
-    private String getTarget(CtInvocation ctInvocation) {
-        if (ctInvocation.getTarget() instanceof CtInvocation) {
-            return getTarget((CtInvocation) ctInvocation.getTarget());
+    private String getTarget(CtAbstractInvocation ctInvocation){
+        CtExpression newTarget = (ctInvocation instanceof CtTargetedExpression) ?
+                ((CtTargetedExpression) ctInvocation).getTarget() : null;
+        if (newTarget != null && newTarget instanceof CtInvocation) {
+            return getTarget((CtInvocation) newTarget);
         } else {
             try {
                 return ctInvocation.getExecutable().getDeclaringType().getQualifiedName();
             } catch (NullPointerException nullPointerException) {
-                System.err.println("Could not find qualified name for method: " + ctInvocation.toString() + " (" + nullPointerException.getMessage() + ")");
+                System.err.println("Could not find qualified name for constructor call: " + ctInvocation.toString() + " (" + nullPointerException.getMessage() + ")");
             }
         }
         return null;

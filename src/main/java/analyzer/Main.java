@@ -18,6 +18,7 @@ public class Main {
 
 
     public static void main(String[] args) {
+        //testRun();
         ArgumentParser parser = ArgumentParsers.newArgumentParser("paprika");
         Subparsers subparsers = parser.addSubparsers().dest("sub_command");
         Subparser analyseParser = subparsers.addParser("analyse").help("Analyse an app");
@@ -60,21 +61,21 @@ public class Main {
     }
 
     public static void testRun() {
-        String path = "/home/sarra/Desktop/ASE-Downloads/KDE_connect/src";
-        String name = "KDEConnect";
-        String key = "YOO";
+        String path = "/home/sarra/Desktop/ASE-Downloads/OLDBASE/2017-07-08/seadroid/app";
+        String name = "Seadroid";
+        String key = "droid-droid";
         int version =1;
         int commitNumber =1;
         String status="Built";
-        String sdkPath = "/home/sarra/Android/Sdk/platforms/android-22/android.jar";
-        String jarsPath =  "/home/sarra/Desktop/ASE-Downloads/TestProject/KDE_connect/dependencies";
+        String sdkPath = "/home/sarra/Android/Sdk/platforms/android-19/android.jar";
+        String jarsPath =  "/home/sarra/Desktop/ASE-Downloads/OLDBASE/2017-07-08/seadroid/app";
         MainProcessor mainProcessor = new MainProcessor(name, version,commitNumber, status, key, path, sdkPath, jarsPath);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();
         graphCreator.createCallGraph();
         MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
-        ModelToGraph modelToGraph=new ModelToGraph("/home/sarra/Desktop/ASE-Downloads/TestProject/databases/graph.db");
+       ModelToGraph modelToGraph=new ModelToGraph("/home/sarra/Desktop/ASE-Downloads/OLDBASE/17-07-2017/databases/graph.db");
         modelToGraph.insertApp(MainProcessor.currentApp);
 
     }
