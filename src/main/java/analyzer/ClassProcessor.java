@@ -3,54 +3,59 @@ package analyzer;
 import entities.PaprikaClass;
 import entities.PaprikaModifiers;
 import entities.PaprikaVariable;
-import spoon.processing.AbstractProcessor;
-import spoon.reflect.code.CtConditional;
-import spoon.reflect.code.CtIf;
 import spoon.reflect.code.CtNewClass;
-import spoon.reflect.declaration.*;
+import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtConstructor;
+import spoon.reflect.declaration.CtField;
+import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.reference.CtTypeReference;
+import spoon.support.reflect.declaration.CtInterfaceImpl;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Iterator;
 import java.util.List;
 
 
 /**
  * Created by sarra on 17/02/17.
  */
-public class ClassProcessor extends AbstractProcessor<CtClass> {
-
-
+public class ClassProcessor extends TypeProcessor<CtClass> {
     private static final URLClassLoader classloader;
 
     static {
         classloader = new URLClassLoader(MainProcessor.paths.toArray(new URL[MainProcessor.paths.size()]));
     }
 
-
-    public void process(CtClass ctClass) {
-        String qualifiedName = ctClass.getQualifiedName();
-        if (ctClass.isAnonymous()) {
+    @Override
+    public void process(CtClass ctType) {
+        String qualifiedName = ctType.getQualifiedName();
+        if (ctType.isAnonymous()) {
             String[] splitName = qualifiedName.split("\\$");
             qualifiedName = splitName[0] + "$" +
-                    ((CtNewClass) ctClass.getParent()).getType().getQualifiedName() + splitName[1];
+                    ((CtNewClass) ctType.getParent()).getType().getQualifiedName() + splitName[1];
         }
-        String visibility = ctClass.getVisibility() == null ? "null" : ctClass.getVisibility().toString();
+        String visibility = ctType.getVisibility() == null ? "null" : ctType.getVisibility().toString();
         PaprikaModifiers paprikaModifiers = DataConverter.convertTextToModifier(visibility);
         if (paprikaModifiers == null) {
             paprikaModifiers = PaprikaModifiers.DEFAULT;
         }
         PaprikaClass paprikaClass = PaprikaClass.createPaprikaClass(qualifiedName, MainProcessor.currentApp, paprikaModifiers);
         MainProcessor.currentClass = paprikaClass;
-        handleProperties(ctClass, paprikaClass);
-        handleAttachments(ctClass, paprikaClass);
-        if (ctClass.getQualifiedName().contains("$")) {
+        handleProperties(ctType, paprikaClass);
+        handleAttachments(ctType, paprikaClass);
+        if (ctType.getQualifiedName().contains("$")) {
             paprikaClass.setInnerClass(true);
         }
-        processMethods(ctClass);
+        processMethods(ctType);
     }
 
+    @Override
+    public boolean isToBeProcessed(CtClass candidate) {
+        return super.isToBeProcessed(candidate) && !(candidate instanceof CtInterfaceImpl);
+    }
+
+    @Override
     public void processMethods(CtClass ctClass) {
         MethodProcessor methodProcessor = new MethodProcessor();
         ConstructorProcessor constructorProcessor = new ConstructorProcessor();
@@ -65,6 +70,7 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
 
     }
 
+    @Override
     public void handleAttachments(CtClass ctClass, PaprikaClass paprikaClass) {
         if (ctClass.getSuperclass() != null) {
             paprikaClass.setParentName(ctClass.getSuperclass().getQualifiedName());
@@ -82,8 +88,8 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
             if (paprikaModifiers1 == null) {
                 paprikaModifiers1 = PaprikaModifiers.DEFAULT;
             }
-            paprikaVariable=PaprikaVariable.createPaprikaVariable(ctField.getSimpleName(), ctField.getType().getQualifiedName(), paprikaModifiers1, paprikaClass);
-            isStatic=false;
+            paprikaVariable = PaprikaVariable.createPaprikaVariable(ctField.getSimpleName(), ctField.getType().getQualifiedName(), paprikaModifiers1, paprikaClass);
+            isStatic = false;
             for (ModifierKind modifierKind : ctField.getModifiers()) {
                 if (modifierKind.toString().toLowerCase().equals("static")) {
                     isStatic = true;
@@ -95,8 +101,9 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
 
     }
 
+    @Override
     public void handleProperties(CtClass ctClass, PaprikaClass paprikaClass) {
-        int doi = 0;
+        Integer doi = 0;
         boolean isApplication = false;
         boolean isContentProvider = false;
         boolean isAsyncTask = false;
@@ -113,52 +120,33 @@ public class ClassProcessor extends AbstractProcessor<CtClass> {
             }
         }
 
-        CtType myClass = ctClass;
-        boolean noSuperClass = false;
-        if (ctClass.getSuperclass() != null) {
-            Class myRealClass;
-            CtTypeReference reference = null;
-            while (myClass != null) {
-                // FIXME: break is superclass.equals(class)!!
-                doi++;
-                if (myClass.getSuperclass() != null) {
-                    reference = myClass.getSuperclass();
-                    myClass = myClass.getSuperclass().getDeclaration();
-                } else {
-                    noSuperClass = true;
-                    myClass = null;
-                }
-            }
-
-            myRealClass = null;
-            if (!noSuperClass) {
-                try {
-
-                    myRealClass = classloader.loadClass(reference.getQualifiedName());
-                    while (myRealClass.getSuperclass() != null) {
-                        doi++;
-                        if (myRealClass.getSimpleName().equals("Activity")) {
-                            isActivity = true;
-                        } else if (myRealClass.getSimpleName().equals("ContentProvider")) {
-                            isContentProvider = true;
-                        } else if (myRealClass.getSimpleName().equals("AsyncTask")) {
-                            isAsyncTask = true;
-                        } else if (myRealClass.getSimpleName().equals("View")) {
-                            isView = true;
-                        } else if (myRealClass.getSimpleName().equals("BroadcastReceiver")) {
-                            isBroadcastReceiver = true;
-                        } else if (myRealClass.getSimpleName().equals("Service")) {
-                            isService = true;
-                        } else if (myRealClass.getSimpleName().equals("Application")) {
-                            isApplication = true;
-                        }
-                        myRealClass = myRealClass.getSuperclass();
+        CtTypeReference reference = findSuperClass(ctClass, doi);
+        if (reference != null) {
+            try {
+                Class myRealClass = classloader.loadClass(reference.getQualifiedName());
+                while (myRealClass.getSuperclass() != null) {
+                    doi++;
+                    if (myRealClass.getSimpleName().equals("Activity")) {
+                        isActivity = true;
+                    } else if (myRealClass.getSimpleName().equals("ContentProvider")) {
+                        isContentProvider = true;
+                    } else if (myRealClass.getSimpleName().equals("AsyncTask")) {
+                        isAsyncTask = true;
+                    } else if (myRealClass.getSimpleName().equals("View")) {
+                        isView = true;
+                    } else if (myRealClass.getSimpleName().equals("BroadcastReceiver")) {
+                        isBroadcastReceiver = true;
+                    } else if (myRealClass.getSimpleName().equals("Service")) {
+                        isService = true;
+                    } else if (myRealClass.getSimpleName().equals("Application")) {
+                        isApplication = true;
                     }
-                } catch (ClassNotFoundException e) {
-                    System.err.println("Class Not Found; message : "+ e.getLocalizedMessage());
-                } catch (NoClassDefFoundError e) {
-                    System.err.println("No Class Def Found : "+ e.getLocalizedMessage());
+                    myRealClass = myRealClass.getSuperclass();
                 }
+            } catch (ClassNotFoundException e) {
+                System.err.println("Class Not Found; message : " + e.getLocalizedMessage());
+            } catch (NoClassDefFoundError e) {
+                System.err.println("No Class Def Found : " + e.getLocalizedMessage());
             }
         }
 

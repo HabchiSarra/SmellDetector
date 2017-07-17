@@ -4,6 +4,9 @@ import entities.PaprikaApp;
 import entities.PaprikaClass;
 import entities.PaprikaMethod;
 import spoon.Launcher;
+import spoon.processing.AbstractProcessor;
+import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtInterface;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,8 +50,8 @@ public class MainProcessor {
             }
             launcher.getEnvironment().setSourceClasspath(cl);
             launcher.buildModel();
-            ClassProcessor classProcessor = new ClassProcessor();
-            InterfaceProcessor interfaceProcessor =new InterfaceProcessor();
+            AbstractProcessor<CtClass> classProcessor = new ClassProcessor();
+            AbstractProcessor<CtInterface> interfaceProcessor =new InterfaceProcessor();
             launcher.addProcessor(classProcessor);
             launcher.addProcessor(interfaceProcessor);
             launcher.process();
