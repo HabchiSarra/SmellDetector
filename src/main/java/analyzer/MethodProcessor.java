@@ -3,8 +3,30 @@ package analyzer;
 import entities.PaprikaArgument;
 import entities.PaprikaMethod;
 import entities.PaprikaModifiers;
-import spoon.reflect.code.*;
-import spoon.reflect.declaration.*;
+import spoon.reflect.code.BinaryOperatorKind;
+import spoon.reflect.code.CtAssignment;
+import spoon.reflect.code.CtBinaryOperator;
+import spoon.reflect.code.CtBreak;
+import spoon.reflect.code.CtCase;
+import spoon.reflect.code.CtCatch;
+import spoon.reflect.code.CtConditional;
+import spoon.reflect.code.CtContinue;
+import spoon.reflect.code.CtFieldAccess;
+import spoon.reflect.code.CtFieldRead;
+import spoon.reflect.code.CtFieldWrite;
+import spoon.reflect.code.CtIf;
+import spoon.reflect.code.CtInvocation;
+import spoon.reflect.code.CtLocalVariable;
+import spoon.reflect.code.CtLoop;
+import spoon.reflect.code.CtReturn;
+import spoon.reflect.code.CtStatement;
+import spoon.reflect.code.CtThisAccess;
+import spoon.reflect.code.CtThrow;
+import spoon.reflect.code.CtVariableRead;
+import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.CtParameter;
+import spoon.reflect.declaration.CtType;
+import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.util.Arrays;
@@ -53,8 +75,8 @@ public class MethodProcessor {
     private int countEffectiveCodeLines(CtMethod ctMethod) {
         try {
             return ctMethod.getBody().toString().split("\n").length;
-        }catch (NullPointerException npe){
-            return ctMethod.getPosition().getEndLine()-ctMethod.getPosition().getLine();
+        } catch (NullPointerException npe) {
+            return ctMethod.getPosition().getEndLine() - ctMethod.getPosition().getLine();
         }
 
     }
@@ -67,7 +89,7 @@ public class MethodProcessor {
 
         for (CtFieldAccess ctFieldAccess : elements) {
             if (ctFieldAccess.getTarget() != null && ctFieldAccess.getTarget().getType() != null) {
-                if(ctFieldAccess.getTarget().getType().getDeclaration() == ctMethod.getDeclaringType()){
+                if (ctFieldAccess.getTarget().getType().getDeclaration() == ctMethod.getDeclaringType()) {
                     variableTarget = ctFieldAccess.getTarget().getType().getQualifiedName();
                     variableName = ctFieldAccess.getVariable().getSimpleName();
                     paprikaMethod.getUsedVariablesData().add(new VariableData(variableTarget, variableName));
@@ -83,16 +105,16 @@ public class MethodProcessor {
     private void handleInvocations(CtMethod ctMethod, PaprikaMethod paprikaMethod) {
         String targetName;
         String executable;
-        String type="Uknown";
+        String type = "Uknown";
         List<CtInvocation> invocations = ctMethod.getElements(new TypeFilter<CtInvocation>(CtInvocation.class));
         for (CtInvocation invocation : invocations) {
             targetName = getTarget(invocation);
             executable = invocation.getExecutable().getSimpleName();
-            if(invocation.getExecutable().getType()!=null){
-                type=invocation.getExecutable().getType().getQualifiedName();
+            if (invocation.getExecutable().getType() != null) {
+                type = invocation.getExecutable().getType().getQualifiedName();
             }
             if (targetName != null) {
-                paprikaMethod.getInvocationData().add(new InvocationData(targetName, executable,type));
+                paprikaMethod.getInvocationData().add(new InvocationData(targetName, executable, type));
             }
         }
     }
@@ -104,7 +126,7 @@ public class MethodProcessor {
             try {
                 return ctInvocation.getExecutable().getDeclaringType().getQualifiedName();
             } catch (NullPointerException nullPointerException) {
-                System.err.println("Error message : "+nullPointerException.getMessage());
+                System.err.println("Could not find qualified name for method: " + ctInvocation.toString() + " (" + nullPointerException.getMessage() + ")");
             }
         }
         return null;
@@ -133,7 +155,7 @@ public class MethodProcessor {
     }
 
     private boolean checkGetter(CtMethod element) {
-        if(element.getBody()==null){
+        if (element.getBody() == null) {
             return false;
         }
         if (element.getBody().getStatements().size() != 1) {
@@ -151,22 +173,22 @@ public class MethodProcessor {
         CtFieldRead returnedExpression = (CtFieldRead) retur.getReturnedExpression();
 
         CtType parent = element.getParent(CtType.class);
-        if(parent == null){
+        if (parent == null) {
             return false;
         }
         try {
             if (parent.equals(returnedExpression.getVariable().getDeclaration().getDeclaringType())) {
                 return true;
             }
-        }catch (NullPointerException npe){
-            System.out.println(npe.getLocalizedMessage());
+        } catch (NullPointerException npe) {
+            System.err.println("Could not find declaring type for getter: " + returnedExpression.getVariable().toString() + " (" + npe.getMessage() + ")");
         }
         return false;
 
     }
 
     private boolean checkSetter(CtMethod element) {
-        if(element.getBody()==null){
+        if (element.getBody() == null) {
             return false;
         }
         if (element.getBody().getStatements().size() != 1) {

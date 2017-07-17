@@ -3,19 +3,18 @@ package analyzer;
 import entities.PaprikaClass;
 import entities.PaprikaModifiers;
 import entities.PaprikaVariable;
-import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtNewClass;
-import spoon.reflect.declaration.*;
+import spoon.reflect.declaration.CtField;
+import spoon.reflect.declaration.CtInterface;
+import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 
-/**
- * Created by sarra on 13/03/17.
- */
-public class InterfaceProcessor extends AbstractProcessor<CtInterface>{
+public class InterfaceProcessor extends TypeProcessor<CtInterface> {
 
     private static final URLClassLoader classloader;
 
@@ -24,37 +23,36 @@ public class InterfaceProcessor extends AbstractProcessor<CtInterface>{
     }
 
     @Override
-    public void process(CtInterface ctInterface) {
-        String qualifiedName = ctInterface.getQualifiedName();
-        if (ctInterface.isAnonymous()) {
+    public void process(CtInterface ctType) {
+        String qualifiedName = ctType.getQualifiedName();
+        if (ctType.isAnonymous()) {
             String[] splitName = qualifiedName.split("\\$");
             qualifiedName = splitName[0] + "$" +
-                    ((CtNewClass) ctInterface.getParent()).getType().getQualifiedName() + splitName[1];
+                    ((CtNewClass) ctType.getParent()).getType().getQualifiedName() + splitName[1];
         }
-        String visibility = ctInterface.getVisibility() == null ? "null" : ctInterface.getVisibility().toString();
+        String visibility = ctType.getVisibility() == null ? "null" : ctType.getVisibility().toString();
         PaprikaModifiers paprikaModifiers = DataConverter.convertTextToModifier(visibility);
         if (paprikaModifiers == null) {
             paprikaModifiers = PaprikaModifiers.DEFAULT;
         }
         PaprikaClass paprikaClass = PaprikaClass.createPaprikaClass(qualifiedName, MainProcessor.currentApp, paprikaModifiers);
         MainProcessor.currentClass = paprikaClass;
-        handleProperties(ctInterface, paprikaClass);
-        handleAttachments(ctInterface, paprikaClass);
-        if (ctInterface.getQualifiedName().contains("$")) {
+        handleProperties(ctType, paprikaClass);
+        handleAttachments(ctType, paprikaClass);
+        if (ctType.getQualifiedName().contains("$")) {
             paprikaClass.setInnerClass(true);
         }
-        processMethods(ctInterface);
-    }
+        processMethods(ctType);    }
 
+    @Override
     public void processMethods(CtInterface ctInterface) {
         MethodProcessor methodProcessor = new MethodProcessor();
         for (Object o : ctInterface.getMethods()) {
             methodProcessor.process((CtMethod) o);
         }
-
-
     }
 
+    @Override
     public void handleAttachments(CtInterface ctInterface, PaprikaClass paprikaClass) {
         if (ctInterface.getSuperclass() != null) {
             paprikaClass.setParentName(ctInterface.getSuperclass().getQualifiedName());
@@ -75,44 +73,30 @@ public class InterfaceProcessor extends AbstractProcessor<CtInterface>{
 
     }
 
+    @Override
     public void handleProperties(CtInterface ctInterface, PaprikaClass paprikaClass) {
-        int doi = 0;
-        boolean isStatic=false;
+        Integer doi = 0;
+        boolean isStatic = false;
         for (ModifierKind modifierKind : ctInterface.getModifiers()) {
             if (modifierKind.toString().toLowerCase().equals("static")) {
                 isStatic = true;
                 break;
             }
         }
-        CtType myClass = ctInterface;
-        boolean noSuperClass = false;
-        if (ctInterface.getSuperclass() != null) {
-            Class myRealClass;
-            CtTypeReference reference = null;
-            while (myClass != null) {
-                doi++;
-                if (myClass.getSuperclass() != null) {
-                    reference = myClass.getSuperclass();
-                    myClass = myClass.getSuperclass().getDeclaration();
-                } else {
-                    noSuperClass = true;
-                    myClass = null;
-                }
-            }
 
-            if (!noSuperClass) {
-                try {
-
-                    myRealClass = classloader.loadClass(reference.getQualifiedName());
-                    while (myRealClass.getSuperclass() != null) {
-                        doi++;
-                        myRealClass = myRealClass.getSuperclass();
-                    }
-                } catch (ClassNotFoundException e) {
-                    System.err.println("Class Not Found; message : "+ e.getLocalizedMessage());
-                } catch (NoClassDefFoundError e) {
-                    System.err.println("No Class Def Found : "+ e.getLocalizedMessage());
+        CtTypeReference reference = findSuperClass(ctInterface, doi);
+        if (reference != null) {
+            try {
+                Class myRealClass;
+                myRealClass = classloader.loadClass(reference.getQualifiedName());
+                while (myRealClass.getSuperclass() != null) {
+                    doi++;
+                    myRealClass = myRealClass.getSuperclass();
                 }
+            } catch (ClassNotFoundException e) {
+                System.err.println("Class Not Found; message : " + e.getLocalizedMessage());
+            } catch (NoClassDefFoundError e) {
+                System.err.println("No Class Def Found : " + e.getLocalizedMessage());
             }
         }
 
