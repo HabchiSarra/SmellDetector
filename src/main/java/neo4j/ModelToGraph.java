@@ -55,6 +55,8 @@ public  class ModelToGraph {
             appNode.setProperty("version",paprikaApp.getVersion());
             appNode.setProperty("commit_number", paprikaApp.getCommitNumber());
             appNode.setProperty("commit_status",paprikaApp.getStatus());
+            appNode.setProperty("sdk_version",paprikaApp.getSdkVersion());
+            appNode.setProperty("analyzed_module", paprikaApp.getModule());
             Date date = new Date();
             SimpleDateFormat  simpleFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
             appNode.setProperty("date_analysis", simpleFormat.format(date));

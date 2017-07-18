@@ -33,6 +33,8 @@ public class Main {
         analyseParser.addArgument("-v", "--version").required(true).help("Version of the apps");
         analyseParser.addArgument("-cn", "--commitNumber").required(true).help("Real commit number");
         analyseParser.addArgument("-s", "--status").required(true).help("Commit status");
+        analyseParser.addArgument("-m", "--module").required(true).help("analyzed module folder");
+        analyseParser.addArgument("-sd", "--sdk").required(true).help("Sdk Version");
 
         Subparser queryParser = subparsers.addParser("query").help("Query the database");
         queryParser.addArgument("-db", "--database").required(true).help("Path to neo4J Database folder");
@@ -68,8 +70,10 @@ public class Main {
         int commitNumber =1;
         String status="Built";
         String sdkPath = "/home/sarra/Android/Sdk/platforms/android-19/android.jar";
+        int sdkVersion = 19;
+        String module ="app";
         String jarsPath =  "/home/sarra/Desktop/ASE-Downloads/OLDBASE/2017-07-08/seadroid/app";
-        MainProcessor mainProcessor = new MainProcessor(name, version,commitNumber, status, key, path, sdkPath, jarsPath);
+        MainProcessor mainProcessor = new MainProcessor(name, version,commitNumber, status, key, path, sdkPath, jarsPath, sdkVersion, module);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();
@@ -90,12 +94,14 @@ public class Main {
         String jarsPath =arg.getString("dependencies");
         int commitNumber = Integer.valueOf(arg.getString("commitNumber"));
         String status =arg.getString("status");
+        int sdkVersion = Integer.valueOf(arg.getString("sdk"));
+        String module = arg.getString("module");
         String[] libs = {};
         if(arg.getString("libs") != null)
         {
             libs = arg.getString("libs").split(":");
         }
-        MainProcessor mainProcessor = new MainProcessor(name, version,commitNumber, status, key, path, sdkPath, jarsPath);
+        MainProcessor mainProcessor = new MainProcessor(name, version,commitNumber, status, key, path, sdkPath, jarsPath,sdkVersion, module);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();
@@ -109,6 +115,7 @@ public class Main {
                 }
             }
         }
+
         MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
         ModelToGraph modelToGraph=new ModelToGraph(arg.getString("database"));
         modelToGraph.insertApp(MainProcessor.currentApp);

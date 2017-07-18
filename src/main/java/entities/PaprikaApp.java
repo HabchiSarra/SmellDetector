@@ -20,14 +20,15 @@ public class PaprikaApp extends Entity{
     private int version;
     private int commitNumber;
     private String status;
-    private String sdkVersion;
+    private int sdkVersion;
     private String targetSdkVersion;
     private String path;
     private List<PaprikaClass> paprikaClasses;
     private List<PaprikaExternalClass> paprikaExternalClasses;
     private ArrayList<PaprikaLibrary> paprikaLibraries;
+    private String module;
 
-    private PaprikaApp(String name, String key, String pack, String date, int size, String developer, String category, String price, double rating, String nbDownload, String versionCode,int version,String sdkVersion,String targetSdkVersion) {
+    private PaprikaApp(String name, String key, String pack, String date, int size, String developer, String category, String price, double rating, String nbDownload, String versionCode,int version,int sdkVersion,String targetSdkVersion) {
         this.name = name;
         this.key = key;
         this.pack = pack;
@@ -47,7 +48,7 @@ public class PaprikaApp extends Entity{
         this.paprikaLibraries = new ArrayList<>();
     }
 
-    private PaprikaApp(String name, int version, int commitNumber, String status, String key, String path) {
+    private PaprikaApp(String name, int version, int commitNumber, String status, String key, String path, int sdkVersion, String module) {
         this.name=name;
         this.key = key;
         this.version = version;
@@ -57,10 +58,12 @@ public class PaprikaApp extends Entity{
         this.path =path;
         this.commitNumber =commitNumber;
         this.status =status;
+        this.sdkVersion = sdkVersion;
+        this.module = module;
     }
 
-    public static PaprikaApp createPaprikaApp(String name, int version, int commitNumber, String status, String key, String path){
-        return new PaprikaApp(name,version, commitNumber, status, key, path);
+    public static PaprikaApp createPaprikaApp(String name, int version, int commitNumber, String status, String key, String path, int sdkVersion, String module){
+        return new PaprikaApp(name,version, commitNumber, status, key, path,sdkVersion,module);
     }
 
     public List<PaprikaExternalClass> getPaprikaExternalClasses() {
@@ -81,7 +84,7 @@ public class PaprikaApp extends Entity{
         paprikaClasses.add(paprikaClass);
     }
 
-    public static PaprikaApp createPaprikaApp(String name, String key, String pack, String date, int size, String dev, String cat, String price, double rating, String nbDownload, String versionCode,int version,String sdkVersion,String targetSdkVersion) {
+    public static PaprikaApp createPaprikaApp(String name, String key, String pack, String date, int size, String dev, String cat, String price, double rating, String nbDownload, String versionCode,int version,int sdkVersion,String targetSdkVersion) {
         return new PaprikaApp(name,key,pack,date,size,dev,cat,price,rating,nbDownload,versionCode,version,sdkVersion,targetSdkVersion);
     }
 
@@ -129,7 +132,7 @@ public class PaprikaApp extends Entity{
         return version;
     }
 
-    public String getSdkVersion() {
+    public int getSdkVersion() {
         return sdkVersion;
     }
 
@@ -194,5 +197,9 @@ public class PaprikaApp extends Entity{
 
     public String getStatus() {
         return status;
+    }
+
+    public String getModule() {
+        return module;
     }
 }

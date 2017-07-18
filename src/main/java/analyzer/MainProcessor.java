@@ -26,8 +26,8 @@ public class MainProcessor {
     String jarsPath;
     String sdkPath;
 
-    public MainProcessor(String appName, int appVersion, int commitNumber, String status, String appKey, String appPath, String sdkPath, String jarsPath) {
-        this.currentApp = PaprikaApp.createPaprikaApp(appName, appVersion, commitNumber, status, appKey, appPath);
+    public MainProcessor(String appName, int appVersion, int commitNumber, String status, String appKey, String appPath, String sdkPath, String jarsPath,int sdkVersion, String module) {
+        this.currentApp = PaprikaApp.createPaprikaApp(appName, appVersion, commitNumber, status, appKey, appPath, sdkVersion, module);
         currentClass = null;
         currentMethod = null;
         this.appPath = appPath;
