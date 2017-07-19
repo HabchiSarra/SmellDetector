@@ -121,32 +121,54 @@ public class ClassProcessor extends TypeProcessor<CtClass> {
         }
 
         CtTypeReference reference = findSuperClass(ctClass, doi);
+
         if (reference != null) {
             try {
                 Class myRealClass = classloader.loadClass(reference.getQualifiedName());
                 while (myRealClass.getSuperclass() != null) {
                     doi++;
-                    if (myRealClass.getSimpleName().equals("Activity")) {
+                    if (myRealClass.getSimpleName().endsWith("Activity")) {
                         isActivity = true;
-                    } else if (myRealClass.getSimpleName().equals("ContentProvider")) {
+                        break;
+                    } else if (myRealClass.getSimpleName().endsWith("ContentProvider")) {
                         isContentProvider = true;
-                    } else if (myRealClass.getSimpleName().equals("AsyncTask")) {
+                        break;
+                    } else if (myRealClass.getSimpleName().endsWith("AsyncTask")) {
                         isAsyncTask = true;
-                    } else if (myRealClass.getSimpleName().equals("View")) {
+                        break;
+                    } else if (myRealClass.getSimpleName().endsWith("View")) {
                         isView = true;
-                    } else if (myRealClass.getSimpleName().equals("BroadcastReceiver")) {
+                        break;
+                    } else if (myRealClass.getSimpleName().endsWith("BroadcastReceiver")) {
                         isBroadcastReceiver = true;
-                    } else if (myRealClass.getSimpleName().equals("Service")) {
+                        break;
+                    } else if (myRealClass.getSimpleName().endsWith("Service")) {
                         isService = true;
-                    } else if (myRealClass.getSimpleName().equals("Application")) {
+                        break;
+                    } else if (myRealClass.getSimpleName().endsWith("Application")) {
                         isApplication = true;
+                        break;
                     }
                     myRealClass = myRealClass.getSuperclass();
                 }
-            } catch (ClassNotFoundException e) {
-                System.err.println("Class Not Found; message : " + e.getLocalizedMessage());
-            } catch (NoClassDefFoundError e) {
-                System.err.println("No Class Def Found : " + e.getLocalizedMessage());
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
+                System.err.println("Class Not Found or Definition Not Found ; message : " + e.getLocalizedMessage());
+                System.out.println("switching to heuristic mode");
+                if (ctClass.getSimpleName().endsWith("Activity")) {
+                    isActivity = true;
+                } else if (ctClass.getSimpleName().endsWith("ContentProvider")) {
+                    isContentProvider = true;
+                } else if (ctClass.getSimpleName().endsWith("AsyncTask")) {
+                    isAsyncTask = true;
+                } else if (ctClass.getSimpleName().endsWith("View")) {
+                    isView = true;
+                } else if (ctClass.getSimpleName().endsWith("BroadcastReceiver")) {
+                    isBroadcastReceiver = true;
+                } else if (ctClass.getSimpleName().endsWith("Service")) {
+                    isService = true;
+                } else if (ctClass.getSimpleName().endsWith("Application")) {
+                    isApplication = true;
+                }
             }
         }
 
