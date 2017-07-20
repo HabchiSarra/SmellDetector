@@ -40,9 +40,9 @@ public class NLMRQuery extends Query {
     @Override
     public void execute(boolean details) throws CypherException, IOException {
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (cl:Class) WHERE exists(cl.is_activity) AND NOT (cl:Class)-[:CLASS_OWNS_METHOD]->(:Method { name: 'onLowMemory' }) AND NOT (cl)-[:EXTENDS]->(:Class) RETURN cl.app_key as app_key";
+            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class) WHERE exists(cl.is_activity) AND NOT (cl:Class)-[:CLASS_OWNS_METHOD]->(:Method { name: 'onLowMemory' }) AND NOT (cl)-[:EXTENDS]->(:Class) RETURN a.commit_number as commit_number, cl.app_key as key";
             if(details){
-                query += ",cl.name as full_name";
+                query += ",cl.name as instance, a.commit_status as commit_status";
             }else{
                 query += ",count(cl) as NLMR";
             }

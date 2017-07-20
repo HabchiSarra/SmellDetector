@@ -65,14 +65,14 @@ public class Main {
     public static void testRun() {
         String path = "/home/sarra/Desktop/ASE-Downloads/OLDBASE/2017-07-08/seadroid/app";
         String name = "Seadroid";
-        String key = "droid-droid";
+        String key = "new-droid";
         int version =1;
         int commitNumber =1;
         String status="Built";
         String sdkPath = "/home/sarra/Android/Sdk/platforms/android-19/android.jar";
         int sdkVersion = 19;
         String module ="app";
-        String jarsPath =  "/home/sarra/Desktop/ASE-Downloads/OLDBASE/2017-07-08/seadroid/app";
+        String jarsPath =  "/home/sarra/Desktop/ASE-Downloads/OLDBASE/2017-07-18/seadroid/app";
         MainProcessor mainProcessor = new MainProcessor(name, version,commitNumber, status, key, path, sdkPath, jarsPath, sdkVersion, module);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);

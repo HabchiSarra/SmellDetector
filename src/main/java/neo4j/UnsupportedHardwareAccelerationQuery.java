@@ -52,13 +52,13 @@ public class UnsupportedHardwareAccelerationQuery extends Query {
                 "setRasterizer#android.graphics.Paint",
                 "setSubpixelText#android.graphics.Paint"
         };
-        String query = "MATCH (m:Method)-[:CALLS]->(e:ExternalMethod) WHERE e.full_name='"+uhas[0]+"'";
+        String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod) WHERE e.full_name='"+uhas[0]+"'";
         for (int i=1; i < uhas.length;i++){
             query += " OR e.full_name='" + uhas[i] + "' ";
         }
-        query += "return m.app_key";
+        query += "return a.commit_number as commit_number, m.app_key as key";
         if(details){
-            query += ",m.full_name as full_name";
+            query += ",m.full_name as instance, a.commit_status as commit_status";
         }else{
             query += ",count(m) as UHA";
         }

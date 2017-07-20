@@ -52,7 +52,7 @@ public class LMQuery extends FuzzyQuery{
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (m:Method) WHERE m.number_of_instructions >" + veryHigh + " RETURN m.app_key as app_key";
             if(details){
-                query += ",m.full_name as full_name";
+                query += ",m.full_name as full_name ";
             }else{
                 query += ",count(m) as LM";
             }

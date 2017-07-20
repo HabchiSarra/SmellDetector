@@ -40,9 +40,9 @@ public class IGSQuery extends Query {
     @Override
     public void execute(boolean details) throws CypherException, IOException {
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (a:App) WITH a.app_key as key MATCH (cl:Class {app_key: key})-[:CLASS_OWNS_METHOD]->(m1:Method {app_key: key})-[:CALLS]->(m2:Method {app_key: key}) WHERE (m2.is_setter OR m2.is_getter) AND (cl)-[:CLASS_OWNS_METHOD]->(m2) RETURN m1.app_key as app_key";
+            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class)-[:CLASS_OWNS_METHOD]->(m1:Method)-[:CALLS]->(m2:Method) WHERE (m2.is_setter OR m2.is_getter) AND (cl)-[:CLASS_OWNS_METHOD]->(m2) RETURN a.commit_number as commit_number, m1.app_key as key";
             if(details){
-                query += ",m1.full_name as full_name,m2.full_name as gs_name";
+                query += ",m1.full_name + m2.full_name as instance, a.commit_status as commit_status ";
             }else{
                 query += ",count(m1) as IGS";
             }
