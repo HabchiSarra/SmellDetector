@@ -3,6 +3,8 @@ package analyzer;
 import entities.PaprikaClass;
 import entities.PaprikaModifiers;
 import entities.PaprikaVariable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spoon.reflect.code.CtNewClass;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
@@ -21,6 +23,7 @@ import java.util.List;
  * Created by sarra on 17/02/17.
  */
 public class ClassProcessor extends TypeProcessor<CtClass> {
+    private static final Logger logger = LoggerFactory.getLogger(ClassProcessor.class.getName());
     private static final URLClassLoader classloader;
 
     static {
@@ -152,8 +155,8 @@ public class ClassProcessor extends TypeProcessor<CtClass> {
                     myRealClass = myRealClass.getSuperclass();
                 }
             } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                System.err.println("Class Not Found or Definition Not Found ; message : " + e.getLocalizedMessage());
-                System.out.println("switching to heuristic mode");
+                logger.warn("Class Not Found or Definition Not Found ; message : " + e.getLocalizedMessage());
+                logger.debug("switching to heuristic mode");
                 if (ctClass.getSimpleName().endsWith("Activity")) {
                     isActivity = true;
                 } else if (ctClass.getSimpleName().endsWith("ContentProvider")) {

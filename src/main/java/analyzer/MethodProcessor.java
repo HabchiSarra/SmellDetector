@@ -1,6 +1,8 @@
 package analyzer;
 
 import entities.PaprikaMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
@@ -10,7 +12,9 @@ import spoon.reflect.declaration.ModifierKind;
  * Created by sarra on 20/02/17.
  */
 public class MethodProcessor extends ExecutableProcessor<CtMethod> {
-     @Override
+    private static final Logger logger = LoggerFactory.getLogger(MethodProcessor.class.getName());
+
+    @Override
     protected void process(CtMethod ctMethod, PaprikaMethod paprikaMethod) {
         paprikaMethod.setSetter(checkSetter(ctMethod));
         paprikaMethod.setGetter(checkGetter(ctMethod));
@@ -49,7 +53,7 @@ public class MethodProcessor extends ExecutableProcessor<CtMethod> {
                 return true;
             }
         } catch (NullPointerException npe) {
-            System.err.println("Could not find declaring type for getter: " + returnedExpression.getVariable().toString() + " (" + npe.getMessage() + ")");
+            logger.warn("Could not find declaring type for getter: " + returnedExpression.getVariable().toString() + " (" + npe.getMessage() + ")");
         }
         return false;
 

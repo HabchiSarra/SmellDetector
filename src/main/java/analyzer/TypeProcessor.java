@@ -1,13 +1,16 @@
 package analyzer;
 
 import entities.PaprikaClass;
-import entities.PaprikaModifiers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtNewClass;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.CtTypeReference;
 
 public abstract class TypeProcessor<T extends CtType> extends AbstractProcessor<T> {
+    private static final Logger logger = LoggerFactory.getLogger(TypeProcessor.class.getName());
+
     // TODO: Holding the method in the superclass send every CtType in each class extending TypeProcessor!
 //    @Override
 //    public void process(T ctType) {
@@ -24,9 +27,9 @@ public abstract class TypeProcessor<T extends CtType> extends AbstractProcessor<
 //        }
 //        PaprikaClass paprikaClass = PaprikaClass.createPaprikaClass(qualifiedName, MainProcessor.currentApp, paprikaModifiers);
 //        MainProcessor.currentClass = paprikaClass;
-//        System.out.println("Type in process: " + ctType.getSimpleName());
-//        System.out.println("Processor: " + this.getClass().getSimpleName());
-//        System.out.println("Type location: " + ctType.getPosition().toString());
+//        logger.debug("Type in process: " + ctType.getSimpleName());
+//        logger.debug("Processor: " + this.getClass().getSimpleName());
+//        logger.debug("Type location: " + ctType.getPosition().toString());
 //        handleProperties(ctType, paprikaClass);
 //        handleAttachments(ctType, paprikaClass);
 //        if (ctType.getQualifiedName().contains("$")) {

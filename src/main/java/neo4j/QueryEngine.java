@@ -18,6 +18,9 @@
 
 package neo4j;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
@@ -32,6 +35,7 @@ import java.util.*;
  * Created by Geoffrey Hecht on 12/01/15.
  */
 public class QueryEngine {
+    private static final Logger logger = LoggerFactory.getLogger(QueryEngine.class.getName());
 
     protected GraphDatabaseService graphDatabaseService;
     protected DatabaseManager databaseManager;
@@ -181,7 +185,7 @@ public class QueryEngine {
         Result result;
         try (Transaction tx = graphDatabaseService.beginTx()) {
             result = graphDatabaseService.execute("MATCH (n {app_key: '"+appKey+"'})-[r]-() DELETE n,r");
-            System.out.println(result.resultAsString());
+            logger.debug(result.resultAsString());
             tx.success();
         }
     }
@@ -230,9 +234,9 @@ public class QueryEngine {
         Result result;
         try (Transaction tx = graphDatabaseService.beginTx()) {
             String request = "MATCH (n:App {app_key: '"+appKey+"'}) DELETE n";
-            System.out.println(request);
+            logger.debug(request);
             result = graphDatabaseService.execute(request);
-            System.out.println(result.resultAsString());
+            logger.debug(result.resultAsString());
             tx.success();
         }
     }
@@ -241,9 +245,9 @@ public class QueryEngine {
         Result result;
         try (Transaction tx = graphDatabaseService.beginTx()) {
             String request = "MATCH (n:"+nodeType1+"  {app_key: '"+appKey+"'})-[r:"+reltype+"]->(m:"+nodeType2+"{app_key: '"+appKey+"'}) DELETE r";
-            System.out.println(request);
+            logger.debug(request);
             result = graphDatabaseService.execute(request);
-            System.out.println(result.resultAsString());
+            logger.debug(result.resultAsString());
             tx.success();
         }
     }
@@ -252,9 +256,9 @@ public class QueryEngine {
         Result result;
         try (Transaction tx = graphDatabaseService.beginTx()) {
             String request = "MATCH (n:"+nodeType1+" {app_key: '"+appKey+"'})<-[r:"+reltype+"]-(m:"+nodeType2+"{app_key: '"+appKey+"'}) DELETE n,r";
-            System.out.println(request);
+            logger.debug(request);
             result = graphDatabaseService.execute(request);
-            System.out.println(result.resultAsString());
+            logger.debug(result.resultAsString());
             tx.success();
         }
     }
@@ -263,9 +267,9 @@ public class QueryEngine {
         Result result;
         try (Transaction tx = graphDatabaseService.beginTx()) {
             String request = "MATCH (n:"+nodeType1+" {app_key: '"+appKey+"'})-[r:"+reltype+"]->(m:"+nodeType2+"{app_key: '"+appKey+"'}) DELETE n,r";
-            System.out.println(request);
+            logger.debug(request);
             result = graphDatabaseService.execute(request);
-            System.out.println(result.resultAsString());
+            logger.debug(result.resultAsString());
             tx.success();
         }
     }
@@ -299,10 +303,10 @@ public class QueryEngine {
     }
 
     public void deleteEntireAppFromPackage(String name) throws IOException {
-        System.out.println("Deleting app with package :"+name);
+        logger.debug("Deleting app with package :"+name);
         List<String> keys = findKeysFromPackageName(name);
         for(String key : keys){
-            System.out.println("Deleting app with app_key :"+key);
+            logger.debug("Deleting app with app_key :"+key);
             deleteEntireApp(key);
         }
     }
