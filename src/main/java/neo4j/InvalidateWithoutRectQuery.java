@@ -49,6 +49,7 @@ public class InvalidateWithoutRectQuery extends Query {
             }
             result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_IWR.csv");
+            ignored.success();
         }
     }
 

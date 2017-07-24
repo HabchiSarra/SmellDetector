@@ -48,6 +48,7 @@ public class InitOnDrawQuery extends Query {
             }
             Result result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_IOD.csv");
+            ignored.success();
         }
     }
 }

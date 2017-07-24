@@ -48,6 +48,7 @@ public class LICQuery extends Query {
             }
             Result result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_LIC.csv");
+            ignored.success();
         }
     }
 }

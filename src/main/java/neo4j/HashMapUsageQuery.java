@@ -49,6 +49,7 @@ public class HashMapUsageQuery extends Query {
             }
             result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_HMU.csv");
+            ignored.success();
         }
     }
 

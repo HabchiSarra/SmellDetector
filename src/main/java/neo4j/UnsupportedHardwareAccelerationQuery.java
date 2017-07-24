@@ -65,6 +65,7 @@ public class UnsupportedHardwareAccelerationQuery extends Query {
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_UHA.csv");
+            ignored.success();
         }
     }
 }

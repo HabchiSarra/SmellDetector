@@ -48,6 +48,7 @@ public class MIMQuery extends Query {
             }
             Result result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_MIM.csv");
+            ignored.success();
         }
     }
 }
