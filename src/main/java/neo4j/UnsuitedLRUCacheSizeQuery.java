@@ -40,7 +40,7 @@ public class UnsuitedLRUCacheSizeQuery extends Query {
     @Override
     public void execute(boolean details) throws CypherException, IOException {
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "Match (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod {full_name:'<init>#android.util.LruCache'}) WHERE NOT (m)-[:CALLS]->(:ExternalMethod {full_name:'getMemoryClass#android.app.ActivityManager'}) return m.commit_number as commit_number, m.app_key as key";
+            String query = "Match (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod {full_name:'<init>#android.util.LruCache'}) WHERE NOT (m)-[:CALLS]->(:ExternalMethod {full_name:'getMemoryClass#android.app.ActivityManager'}) SET a.has_UCS=true return m.commit_number as commit_number, m.app_key as key";
             if(details){
                 query += ",m.full_name as instance, a.commit_status as commit_status";
             }else{

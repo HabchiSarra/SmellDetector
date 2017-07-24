@@ -56,7 +56,7 @@ public class UnsupportedHardwareAccelerationQuery extends Query {
         for (int i=1; i < uhas.length;i++){
             query += " OR e.full_name='" + uhas[i] + "' ";
         }
-        query += "return a.commit_number as commit_number, m.app_key as key";
+        query += " SET a.has_UHA=true return a.commit_number as commit_number, m.app_key as key";
         if(details){
             query += ",m.full_name as instance, a.commit_status as commit_status";
         }else{

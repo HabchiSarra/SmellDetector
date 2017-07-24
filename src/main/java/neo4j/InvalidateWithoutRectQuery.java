@@ -41,7 +41,7 @@ public class InvalidateWithoutRectQuery extends Query {
     public void execute(boolean details) throws CypherException, IOException {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query ="MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:'onDraw'})-[:CALLS]->(e:ExternalMethod{name:'invalidate'}) WHERE NOT (e)-[:METHOD_OWNS_ARGUMENT]->(:ExternalArgument) return a.commit_number as commit_number, n.app_key as key";
+            String query ="MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:'onDraw'})-[:CALLS]->(e:ExternalMethod{name:'invalidate'}) WHERE NOT (e)-[:METHOD_OWNS_ARGUMENT]->(:ExternalArgument) SET a.has_IWR=true return a.commit_number as commit_number, n.app_key as key";
             if(details){
                 query += ",n.full_name as instance, a.commit_status as commit_status";
             }else{
