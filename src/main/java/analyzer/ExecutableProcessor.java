@@ -3,6 +3,8 @@ package analyzer;
 import entities.PaprikaArgument;
 import entities.PaprikaMethod;
 import entities.PaprikaModifiers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
 import spoon.reflect.visitor.filter.TypeFilter;
@@ -11,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class ExecutableProcessor<T extends CtExecutable> {
+    private static final Logger logger = LoggerFactory.getLogger(ExecutableProcessor.class.getName());
+
     public void process(T ctExecutable) {
         String name = ctExecutable.getSimpleName();
         String returnType = ctExecutable.getType().getQualifiedName();
@@ -81,9 +85,6 @@ public abstract class ExecutableProcessor<T extends CtExecutable> {
         String targetName;
         String executable;
         String type = "Unknown";
-        if (paprikaMethod.getName().equals("getExtraHeaders")) {
-            System.out.println("BLOP!");
-        }
         // Thanks to spoon we have to use a CtAbstractInvocation
         List<CtAbstractInvocation> invocations = ctConstructor.getElements(new TypeFilter<>(CtAbstractInvocation.class));
         for (CtAbstractInvocation invocation : invocations) {
@@ -107,7 +108,7 @@ public abstract class ExecutableProcessor<T extends CtExecutable> {
             try {
                 return ctInvocation.getExecutable().getDeclaringType().getQualifiedName();
             } catch (NullPointerException nullPointerException) {
-                System.err.println("Could not find qualified name for constructor call: " + ctInvocation.toString() + " (" + nullPointerException.getMessage() + ")");
+                logger.warn("Could not find qualified name for constructor call: " + ctInvocation.toString() + " (" + nullPointerException.getMessage() + ")");
             }
         }
         return null;

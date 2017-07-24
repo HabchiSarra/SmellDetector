@@ -13,8 +13,11 @@ import spoon.reflect.reference.CtTypeReference;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InterfaceProcessor extends TypeProcessor<CtInterface> {
+    private static final Logger logger = LoggerFactory.getLogger(InterfaceProcessor.class.getName());
 
     private static final URLClassLoader classloader;
 
@@ -94,9 +97,9 @@ public class InterfaceProcessor extends TypeProcessor<CtInterface> {
                     myRealClass = myRealClass.getSuperclass();
                 }
             } catch (ClassNotFoundException e) {
-                System.err.println("Class Not Found; message : " + e.getLocalizedMessage());
+                logger.warn("Class Not Found; message : " + e.getLocalizedMessage());
             } catch (NoClassDefFoundError e) {
-                System.err.println("No Class Def Found : " + e.getLocalizedMessage());
+                logger.warn("No Class Def Found : " + e.getLocalizedMessage());
             }
         }
 

@@ -6,16 +6,17 @@ import metrics.MetricsCalculator;
 import neo4j.*;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.*;
-import scala.collection.mutable.ArrayLike$class;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by sarra on 17/02/17.
  */
 public class Main {
-
+    private static final Logger logger = LoggerFactory.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
         //testRun();
@@ -85,7 +86,7 @@ public class Main {
     }
 
     public static void runAnalysis(Namespace arg) throws Exception {
-        System.out.println("Collecting metrics");
+        logger.info("Collecting metrics");
         String path = arg.getString("folder");
         String name = arg.getString("name");
         int version = Integer.valueOf(arg.getString("version"));
@@ -119,19 +120,19 @@ public class Main {
         MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
         ModelToGraph modelToGraph=new ModelToGraph(arg.getString("database"));
         modelToGraph.insertApp(MainProcessor.currentApp);
-        System.out.println("Saving into database "+arg.getString("database"));
-        System.out.println("Done");
+        logger.info("Saving into database "+arg.getString("database"));
+        logger.info("Done");
     }
 
     public static void queryMode(Namespace arg) throws Exception {
-        System.out.println("Executing Queries");
+        logger.info("Executing Queries");
         QueryEngine queryEngine = new QueryEngine(arg.getString("database"));
         String request = arg.get("request");
         Boolean details = arg.get("details");
         Calendar cal = new GregorianCalendar();
         String csvDate = String.valueOf(cal.get(Calendar.YEAR))+"_"+String.valueOf(cal.get(Calendar.MONTH)+1)+"_"+String.valueOf(cal.get(Calendar.DAY_OF_MONTH))+"_"+String.valueOf(cal.get(Calendar.HOUR_OF_DAY))+"_"+String.valueOf(cal.get(Calendar.MINUTE));
         String csvPrefix = arg.getString("csv")+csvDate;
-        System.out.println("Resulting csv file name will start with prefix "+csvPrefix);
+        logger.debug("Resulting csv file name will start with prefix " + csvPrefix);
         queryEngine.setCsvPrefix(csvPrefix);
         switch(request){
             case "ARGB8888":
@@ -280,11 +281,11 @@ public class Main {
                 HeavyAsyncTaskStepsQuery.createHeavyAsyncTaskStepsQuery(queryEngine).execute(details);
                 break;
             default:
-                System.out.println("Executing custom request");
+                logger.info("Executing custom request");
                 queryEngine.executeRequest(request);
         }
         queryEngine.shutDown();
-        System.out.println("Done");
+        logger.info("Done");
     }
 
 
