@@ -240,6 +240,7 @@ public class Main {
                 UnsupportedHardwareAccelerationQuery.createUnsupportedHardwareAccelerationQuery(queryEngine).execute(details);
                 HashMapUsageQuery.createHashMapUsageQuery(queryEngine).execute(details);
                 InvalidateWithoutRectQuery.createInvalidateWithoutRectQuery(queryEngine).execute(details);
+                new NoSmellsQuery(queryEngine).execute(details);
                 break;
             case "FUZZY":
                 CCQuery.createCCQuery(queryEngine).executeFuzzy(details);
