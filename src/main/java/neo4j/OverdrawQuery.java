@@ -50,6 +50,7 @@ public class OverdrawQuery extends Query {
             }
             Result result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_UIO.csv");
+            ignored.success();
         }
     }
 }

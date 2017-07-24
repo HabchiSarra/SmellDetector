@@ -48,6 +48,7 @@ public class NLMRQuery extends Query {
             }
             Result result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_NLMR.csv");
+            ignored.success();
         }
     }
 }

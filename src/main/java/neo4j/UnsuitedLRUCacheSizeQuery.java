@@ -48,6 +48,7 @@ public class UnsuitedLRUCacheSizeQuery extends Query {
             }
             Result result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_UCS.csv");
+            ignored.success();
         }
     }
 }

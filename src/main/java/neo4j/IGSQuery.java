@@ -48,6 +48,7 @@ public class IGSQuery extends Query {
             }
             Result result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_IGS.csv");
+            ignored.success();
         }
     }
 }
