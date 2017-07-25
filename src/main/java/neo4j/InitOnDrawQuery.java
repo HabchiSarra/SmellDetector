@@ -40,7 +40,8 @@ public class InitOnDrawQuery extends Query {
     @Override
     public void execute(boolean details) throws CypherException, IOException {
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:'onDraw'})-[:CALLS]->({name:'<init>'}) SET a.has_IOD=true return a.commit_number as commit_number,  n.app_key as key ";
+            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:'onDraw'})-[:CALLS]->({name:'<init>'}) SET a.has_IOD=true " +
+                    "return a.commit_number as commit_number,  n.app_key as key ";
             if(details){
                 query += ",n.full_name as instance, a.commit_status as commit_status";
             }else{

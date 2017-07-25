@@ -40,7 +40,8 @@ public class MIMQuery extends Query {
     @Override
     public void execute(boolean details) throws CypherException, IOException {
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m1:Method) WHERE m1.number_of_callers>0 AND NOT exists(m1.is_static) AND NOT exists(m1.is_override) AND NOT (m1)-[:USES]->(:Variable) AND NOT (m1)-[:CALLS]->(:ExternalMethod) AND NOT (m1)-[:CALLS]->(:Method) AND NOT exists(m1.is_init) SET a.has_MIM=true RETURN a.commit_number as commit_number, m1.app_key as key";
+            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m1:Method) WHERE m1.number_of_callers>0 AND NOT exists(m1.is_static) AND NOT exists(m1.is_override) AND NOT (m1)-[:USES]->(:Variable) AND NOT (m1)-[:CALLS]->(:ExternalMethod) AND NOT (m1)-[:CALLS]->(:Method) AND NOT exists(m1.is_init) SET a.has_MIM=true " +
+                    "RETURN a.commit_number as commit_number, m1.app_key as key";
             if(details){
                 query += ",m1.full_name as instance, a.commit_status as commit_status";
             }else{

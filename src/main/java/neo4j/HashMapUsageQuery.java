@@ -41,7 +41,8 @@ public class HashMapUsageQuery extends Query {
     public void execute(boolean details) throws CypherException, IOException {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod{full_name:'<init>#java.util.HashMap'}) SET a.has_HMU=true return a.commit_number as commit_number, m.app_key as key";
+            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod{full_name:'<init>#java.util.HashMap'}) SET a.has_HMU=true " +
+                    "return a.commit_number as commit_number, m.app_key as key";
             if(details){
                 query += ",m.full_name as instance, a.commit_status as commit_status";
             }else{
