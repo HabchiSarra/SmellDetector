@@ -27,7 +27,11 @@ public class ClassProcessor extends TypeProcessor<CtClass> {
     private static final URLClassLoader classloader;
 
     static {
-        classloader = new URLClassLoader(MainProcessor.paths.toArray(new URL[MainProcessor.paths.size()]));
+        if (MainProcessor.paths == null) {
+            classloader = new URLClassLoader(new URL[0]);
+        } else {
+            classloader = new URLClassLoader(MainProcessor.paths.toArray(new URL[MainProcessor.paths.size()]));
+        }
     }
 
     @Override

@@ -21,12 +21,12 @@ public class MainProcessor {
     static PaprikaApp currentApp;
     static PaprikaClass currentClass;
     static PaprikaMethod currentMethod;
-    static ArrayList<URL> paths;
+    static ArrayList<URL> paths = new ArrayList<>();
     String appPath;
-    String jarsPath;
-    String sdkPath;
+    private String jarsPath;
+    private String sdkPath;
 
-    public MainProcessor(String appName, int appVersion, int commitNumber, String status, String appKey, String appPath, String sdkPath, String jarsPath,int sdkVersion, String module) {
+    public MainProcessor(String appName, int appVersion, int commitNumber, String status, String appKey, String appPath, String sdkPath, String jarsPath, int sdkVersion, String module) {
         this.currentApp = PaprikaApp.createPaprikaApp(appName, appVersion, commitNumber, status, appKey, appPath, sdkVersion, module);
         currentClass = null;
         currentMethod = null;
@@ -39,37 +39,46 @@ public class MainProcessor {
         Launcher launcher = new Launcher();
         launcher.addInputResource(appPath);
         launcher.getEnvironment().setNoClasspath(true);
-        File folder = new File(jarsPath);
+
+//        update_classpath(launcher);
+
+        launcher.buildModel();
+        AbstractProcessor<CtClass> classProcessor = new ClassProcessor();
+        AbstractProcessor<CtInterface> interfaceProcessor = new InterfaceProcessor();
+        launcher.addProcessor(classProcessor);
+        launcher.addProcessor(interfaceProcessor);
+        launcher.process();
+    }
+
+    private void update_classpath(Launcher launcher) {
         try {
-            paths = this.listFilesForFolder(folder);
-            paths.add(new File(sdkPath).toURI().toURL());
+            paths = new ArrayList<>();
+            if (this.jarsPath != null) {
+                File folder = new File(jarsPath);
+                paths = this.listFilesForFolder(folder);
+            }
+            if (this.sdkPath != null) {
+                paths.add(new File(sdkPath).toURI().toURL());
+            }
             String[] cl = new String[paths.size()];
             for (int i = 0; i < paths.size(); i++) {
                 URL url = paths.get(i);
                 cl[i] = url.getPath();
             }
             launcher.getEnvironment().setSourceClasspath(cl);
-            launcher.buildModel();
-            AbstractProcessor<CtClass> classProcessor = new ClassProcessor();
-            AbstractProcessor<CtInterface> interfaceProcessor =new InterfaceProcessor();
-            launcher.addProcessor(classProcessor);
-            launcher.addProcessor(interfaceProcessor);
-            launcher.process();
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
-
     }
 
-    public ArrayList<URL> listFilesForFolder(final File folder) throws IOException {
+    private ArrayList<URL> listFilesForFolder(final File folder) throws IOException {
         ArrayList<URL> jars = new ArrayList<>();
-        if(folder.listFiles()==null){
+        File[] files = folder.listFiles();
+        if (files == null) {
             return jars;
         }
-        for (final File fileEntry : folder.listFiles()) {
-
+        for (final File fileEntry : files) {
             jars.add(fileEntry.toURI().toURL());
-
         }
         return jars;
     }
