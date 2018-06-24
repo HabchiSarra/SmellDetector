@@ -22,15 +22,13 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
 public class InvalidateWithoutRectQuery extends Query {
 
     private InvalidateWithoutRectQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "IWR");
     }
 
     public static InvalidateWithoutRectQuery createInvalidateWithoutRectQuery(QueryEngine queryEngine) {
@@ -38,21 +36,20 @@ public class InvalidateWithoutRectQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public Result fetchResult(boolean details) throws CypherException {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query ="MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:'onDraw'})-[:CALLS]->(e:ExternalMethod{name:'invalidate'}) " +
+            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:'onDraw'})-[:CALLS]->(e:ExternalMethod{name:'invalidate'}) " +
                     "WHERE NOT (e)-[:METHOD_OWNS_ARGUMENT]->(:ExternalArgument) SET a.has_IWR=true " +
                     "return a.commit_number as commit_number, n.app_key as key";
-            if(details){
+            if (details) {
                 query += ",n.full_name as instance, a.commit_status as commit_status";
-            }else{
+            } else {
                 query += ",count(n) as IWR";
             }
             result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_IWR.csv");
             ignored.success();
         }
+        return result;
     }
-
 }

@@ -22,15 +22,13 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
 public class HashMapUsageQuery extends Query {
 
     private HashMapUsageQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "HMU");
     }
 
     public static HashMapUsageQuery createHashMapUsageQuery(QueryEngine queryEngine) {
@@ -38,20 +36,20 @@ public class HashMapUsageQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public Result fetchResult(boolean details) throws CypherException {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod{full_name:'<init>#java.util.HashMap'}) SET a.has_HMU=true " +
                     "return a.commit_number as commit_number, m.app_key as key";
-            if(details){
+            if (details) {
                 query += ",m.full_name as instance, a.commit_status as commit_status";
-            }else{
+            } else {
                 query += ", count(m) as HMU";
             }
             result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_HMU.csv");
             ignored.success();
         }
+        return result;
     }
 
 }

@@ -22,15 +22,13 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
 public class TrackingHardwareIdQuery extends Query {
 
     private TrackingHardwareIdQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "THI");
     }
 
     public static TrackingHardwareIdQuery createTrackingHardwareIdQuery(QueryEngine queryEngine) {
@@ -38,16 +36,17 @@ public class TrackingHardwareIdQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public Result fetchResult(boolean details) throws CypherException {
+        Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (m1:Method)-[:CALLS]->(:ExternalMethod { full_name:'getDeviceId#android.telephony.TelephonyManager'}) RETURN m1.app_key as app_key";
-            if(details){
+            if (details) {
                 query += ",m1.full_name as full_name";
-            }else{
+            } else {
                 query += ",count(m1) as THI";
             }
-            Result result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_THI.csv");
+            result = graphDatabaseService.execute(query);
         }
+        return result;
     }
 }

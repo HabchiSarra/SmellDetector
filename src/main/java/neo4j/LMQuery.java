@@ -34,12 +34,12 @@ import java.util.Map;
 /**
  * Created by Geoffrey Hecht on 14/08/15.
  */
-public class LMQuery extends FuzzyQuery{
+public class LMQuery extends FuzzyQuery {
     protected static double high = 17;
     protected static double veryHigh = 26;
 
     private LMQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "LM_NO_FUZZY");
         fclFile = "/LongMethod.fcl";
     }
 
@@ -47,54 +47,55 @@ public class LMQuery extends FuzzyQuery{
         return new LMQuery(queryEngine);
     }
 
-    public void execute(boolean details) throws CypherException, IOException {
+    @Override
+    public Result fetchResult(boolean details) throws CypherException {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (m:Method) WHERE m.number_of_instructions >" + veryHigh + " RETURN m.app_key as app_key";
-            if(details){
+            if (details) {
                 query += ",m.full_name as full_name ";
-            }else{
+            } else {
                 query += ",count(m) as LM";
             }
             result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result,"_LM_NO_FUZZY.csv");
         }
+        return result;
     }
 
     public void executeFuzzy(boolean details) throws CypherException, IOException {
-            Result result;
-            try (Transaction ignored = graphDatabaseService.beginTx()) {
-                String query =  "MATCH (m:Method) WHERE m.number_of_instructions >" + high + " RETURN m.app_key as app_key,m.number_of_instructions as number_of_instructions";
-                if(details){
-                    query += ",m.full_name as full_name";
-                }
-                result = graphDatabaseService.execute(query);
-                List<String> columns = new ArrayList<>(result.columns());
-                columns.add("fuzzy_value");
-                int cc;
-                List<Map> fuzzyResult = new ArrayList<>();
-                File fcf = new File(fclFile);
-                //We look if the file is in a directory otherwise we look inside the jar
-                FIS fis;
-                if(fcf.exists() && !fcf.isDirectory()){
-                    fis = FIS.load(fclFile, false);
-                }else{
-                    fis = FIS.load(getClass().getResourceAsStream(fclFile),false);
-                }
-                FunctionBlock fb = fis.getFunctionBlock(null);
-                while(result.hasNext()){
-                    HashMap res = new HashMap(result.next());
-                    cc = (int) res.get("number_of_instructions");
-                    if(cc >= veryHigh){
-                        res.put("fuzzy_value", 1);
-                    }else {
-                        fb.setVariable("number_of_instructions",cc);
-                        fb.evaluate();
-                        res.put("fuzzy_value", fb.getVariable("res").getValue());
-                    }
-                    fuzzyResult.add(res);
-                    }
-                    queryEngine.resultToCSV(fuzzyResult,columns,"_LM.csv");
+        Result result;
+        try (Transaction ignored = graphDatabaseService.beginTx()) {
+            String query = "MATCH (m:Method) WHERE m.number_of_instructions >" + high + " RETURN m.app_key as app_key,m.number_of_instructions as number_of_instructions";
+            if (details) {
+                query += ",m.full_name as full_name";
             }
+            result = graphDatabaseService.execute(query);
+            List<String> columns = new ArrayList<>(result.columns());
+            columns.add("fuzzy_value");
+            int cc;
+            List<Map> fuzzyResult = new ArrayList<>();
+            File fcf = new File(fclFile);
+            //We look if the file is in a directory otherwise we look inside the jar
+            FIS fis;
+            if (fcf.exists() && !fcf.isDirectory()) {
+                fis = FIS.load(fclFile, false);
+            } else {
+                fis = FIS.load(getClass().getResourceAsStream(fclFile), false);
+            }
+            FunctionBlock fb = fis.getFunctionBlock(null);
+            while (result.hasNext()) {
+                HashMap res = new HashMap(result.next());
+                cc = (int) res.get("number_of_instructions");
+                if (cc >= veryHigh) {
+                    res.put("fuzzy_value", 1);
+                } else {
+                    fb.setVariable("number_of_instructions", cc);
+                    fb.evaluate();
+                    res.put("fuzzy_value", fb.getVariable("res").getValue());
+                }
+                fuzzyResult.add(res);
+            }
+            queryEngine.resultToCSV(fuzzyResult, columns, "_LM.csv");
+        }
     }
 }

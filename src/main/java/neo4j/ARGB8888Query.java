@@ -22,15 +22,13 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-
 /**
  * Created by antonin on 16-05-03.
  */
 public class ARGB8888Query extends Query {
 
     private ARGB8888Query(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "ARGB8888");
     }
 
     public static ARGB8888Query createARGB8888Query(QueryEngine queryEngine) {
@@ -38,15 +36,16 @@ public class ARGB8888Query extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public Result fetchResult(boolean details) throws CypherException {
+        Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (e: ExternalArgument) WHERE exists(e.is_argb_8888) RETURN e";
             if (details) {
                 query += ", count(e) as ARGB8888";
             }
-            Result result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_ARGB8888.csv");
+            result = graphDatabaseService.execute(query);
         }
+        return result;
     }
 
 }

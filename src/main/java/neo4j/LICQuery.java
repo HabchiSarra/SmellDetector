@@ -22,34 +22,36 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
 public class LICQuery extends Query {
 
     private LICQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "LIC");
     }
 
     public static LICQuery createLICQuery(QueryEngine queryEngine) {
         return new LICQuery(queryEngine);
     }
 
+
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public Result fetchResult(boolean details) throws CypherException {
+        Result result = null;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class) WHERE exists(cl.is_inner_class) AND NOT exists(cl.is_static) SET a.has_LIC=true " +
                     "RETURN a.commit_number as commit_number, cl.app_key as key";
-            if(details){
+            if (details) {
                 query += ",cl.name as instance, a.commit_status as commit_status";
-            }else{
+            } else {
                 query += ",count(cl) as LIC";
             }
-            Result result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_LIC.csv");
+            result = graphDatabaseService.execute(query);
             ignored.success();
         }
+        return result;
     }
+
+
 }

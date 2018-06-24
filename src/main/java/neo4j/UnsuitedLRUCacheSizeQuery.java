@@ -22,15 +22,13 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
 public class UnsuitedLRUCacheSizeQuery extends Query {
 
     private UnsuitedLRUCacheSizeQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "UCS");
     }
 
     public static UnsuitedLRUCacheSizeQuery createUnsuitedLRUCacheSizeQuery(QueryEngine queryEngine) {
@@ -38,18 +36,19 @@ public class UnsuitedLRUCacheSizeQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public Result fetchResult(boolean details) throws CypherException {
+        Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "Match (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod {full_name:'<init>#android.util.LruCache'}) WHERE NOT (m)-[:CALLS]->(:ExternalMethod {full_name:'getMemoryClass#android.app.ActivityManager'}) SET a.has_UCS=true " +
                     "return a.commit_number as commit_number, m.app_key as key";
-            if(details){
+            if (details) {
                 query += ",m.full_name as instance, a.commit_status as commit_status";
-            }else{
+            } else {
                 query += ",count(m) as UCS";
             }
-            Result result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_UCS.csv");
+            result = graphDatabaseService.execute(query);
             ignored.success();
         }
+        return result;
     }
 }

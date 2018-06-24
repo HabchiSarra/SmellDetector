@@ -20,6 +20,7 @@ package neo4j;
 
 import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Result;
 
 import java.io.IOException;
 
@@ -29,11 +30,21 @@ import java.io.IOException;
 public abstract class Query {
     protected QueryEngine queryEngine;
     protected GraphDatabaseService graphDatabaseService;
+    protected String smellName;
 
-    public Query(QueryEngine queryEngine) {
+    public Query(QueryEngine queryEngine, String smellName) {
         this.queryEngine = queryEngine;
+        this.smellName = smellName;
         graphDatabaseService = queryEngine.getGraphDatabaseService();
     }
 
-    public abstract void execute(boolean details) throws CypherException, IOException;
+
+    public void execute(boolean details) throws CypherException, IOException {
+        Result result = fetchResult(details);
+        queryEngine.resultToCSV(result, "_" + smellName + ".csv");
+
+    }
+
+    public abstract Result fetchResult(boolean details) throws CypherException;
+
 }

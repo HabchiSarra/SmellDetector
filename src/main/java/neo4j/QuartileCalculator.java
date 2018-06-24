@@ -72,7 +72,7 @@ public class QuartileCalculator {
         queryEngine.statsToCSV(res, "_STAT_NB_INSTRUCTIONS.csv");
     }
 
-    public Map calculateQuartile(String nodeType, String property){
+    public Map calculateQuartile(String nodeType, String property) {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (n:" + nodeType + ") RETURN percentileCont(n." + property + ",0.25) as Q1,percentileCont(n." + property + ",0.5) as MED, percentileCont(n." + property + ",0.75) as Q3";
@@ -81,29 +81,29 @@ public class QuartileCalculator {
         }
     }
 
-    private Map calculeTresholds(Result result){
+    private Map calculeTresholds(Result result) {
         Map<String, Double> res = new HashMap<>();
         //Only one result in that case
-        while (result.hasNext())
-        {
-            Map<String,Object> row = result.next();
+        while (result.hasNext()) {
+            Map<String, Object> row = result.next();
             //Sometime neo4J return a double or an int... With toString it's works in all cases
             double q1 = Double.valueOf(row.get("Q1").toString());
             double med = Double.valueOf(row.get("MED").toString());
             double q3 = Double.valueOf(row.get("Q3").toString());
-            double high  = q3 + ( 1.5 * ( q3 - q1));
-            double very_high  = q3 + ( 3 * ( q3 - q1));
-            res.put("Q1",q1);
-            res.put("Q3",q3);
-            res.put("MED",med);
-            res.put("HIGH (1.5)",high);
-            res.put("VERY HIGH (3.0)",very_high);
+            double high = q3 + (1.5 * (q3 - q1));
+            double very_high = q3 + (3 * (q3 - q1));
+            res.put("Q1", q1);
+            res.put("Q3", q3);
+            res.put("MED", med);
+            res.put("HIGH (1.5)", high);
+            res.put("VERY HIGH (3.0)", very_high);
         }
         return res;
     }
 
     /**
      * Excluding classes implementing 0 or 1 interface
+     *
      * @return
      */
     public void calculateNumberOfImplementedInterfacesQuartile() throws IOException {

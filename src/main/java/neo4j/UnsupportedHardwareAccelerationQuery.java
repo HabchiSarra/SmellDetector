@@ -22,25 +22,24 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
 public class UnsupportedHardwareAccelerationQuery extends Query {
 
     private UnsupportedHardwareAccelerationQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "UHA");
     }
 
     public static UnsupportedHardwareAccelerationQuery createUnsupportedHardwareAccelerationQuery(QueryEngine queryEngine) {
         return new UnsupportedHardwareAccelerationQuery(queryEngine);
     }
 
+
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public Result fetchResult(boolean details) throws CypherException {
         Result result;
-        String [] uhas = {
+        String[] uhas = {
                 "drawPicture#android.graphics.Canvas",
                 "drawVertices#android.graphics.Canvas",
                 "drawPosText#android.graphics.Canvas",
@@ -52,20 +51,20 @@ public class UnsupportedHardwareAccelerationQuery extends Query {
                 "setRasterizer#android.graphics.Paint",
                 "setSubpixelText#android.graphics.Paint"
         };
-        String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod) WHERE e.full_name='"+uhas[0]+"'";
-        for (int i=1; i < uhas.length;i++){
+        String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod) WHERE e.full_name='" + uhas[0] + "'";
+        for (int i = 1; i < uhas.length; i++) {
             query += " OR e.full_name='" + uhas[i] + "' ";
         }
         query += " SET a.has_UHA=true return a.commit_number as commit_number, m.app_key as key";
-        if(details){
+        if (details) {
             query += ",m.full_name as instance, a.commit_status as commit_status";
-        }else{
+        } else {
             query += ",count(m) as UHA";
         }
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_UHA.csv");
             ignored.success();
         }
+        return result;
     }
 }

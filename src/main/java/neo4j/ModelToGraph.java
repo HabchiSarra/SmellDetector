@@ -1,24 +1,11 @@
-
 package neo4j;
 
 import entities.Entity;
-import entities.PaprikaApp;
-import entities.PaprikaArgument;
-import entities.PaprikaClass;
-import entities.PaprikaExternalArgument;
-import entities.PaprikaExternalClass;
-import entities.PaprikaExternalMethod;
-import entities.PaprikaLibrary;
-import entities.PaprikaMethod;
-import entities.PaprikaVariable;
+import entities.*;
 import metrics.Metric;
+import org.neo4j.graphdb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.neo4j.graphdb.DynamicLabel;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

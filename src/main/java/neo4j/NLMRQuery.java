@@ -22,12 +22,10 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-
 public class NLMRQuery extends Query {
 
     private NLMRQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "NLMR");
     }
 
     public static NLMRQuery createNLMRQuery(QueryEngine queryEngine) {
@@ -35,18 +33,19 @@ public class NLMRQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public Result fetchResult(boolean details) throws CypherException {
+        Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class) WHERE exists(cl.is_activity) AND NOT (cl:Class)-[:CLASS_OWNS_METHOD]->(:Method { name: 'onLowMemory' }) AND NOT (cl)-[:EXTENDS]->(:Class) SET a.has_NLMR=true " +
                     "RETURN a.commit_number as commit_number, cl.app_key as key";
-            if(details){
+            if (details) {
                 query += ",cl.name as instance, a.commit_status as commit_status";
-            }else{
+            } else {
                 query += ",count(cl) as NLMR";
             }
-            Result result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_NLMR.csv");
+            result = graphDatabaseService.execute(query);
             ignored.success();
         }
+        return result;
     }
 }

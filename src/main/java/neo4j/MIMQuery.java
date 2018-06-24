@@ -22,15 +22,13 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
 public class MIMQuery extends Query {
 
     private MIMQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "MIM");
     }
 
     public static MIMQuery createMIMQuery(QueryEngine queryEngine) {
@@ -38,18 +36,19 @@ public class MIMQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public Result fetchResult(boolean details) throws CypherException {
+        Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m1:Method) WHERE m1.number_of_callers>0 AND NOT exists(m1.is_static) AND NOT exists(m1.is_override) AND NOT (m1)-[:USES]->(:Variable) AND NOT (m1)-[:CALLS]->(:ExternalMethod) AND NOT (m1)-[:CALLS]->(:Method) AND NOT exists(m1.is_init) SET a.has_MIM=true " +
                     "RETURN a.commit_number as commit_number, m1.app_key as key";
-            if(details){
+            if (details) {
                 query += ",m1.full_name as instance, a.commit_status as commit_status";
-            }else{
+            } else {
                 query += ",count(m1) as MIM";
             }
-            Result result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_MIM.csv");
+            result = graphDatabaseService.execute(query);
             ignored.success();
         }
+        return result;
     }
 }

@@ -30,7 +30,7 @@ import java.io.IOException;
 public class IGSQuery extends Query {
 
     private IGSQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "IGS");
     }
 
     public static IGSQuery createIGSQuery(QueryEngine queryEngine) {
@@ -42,14 +42,19 @@ public class IGSQuery extends Query {
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class)-[:CLASS_OWNS_METHOD]->(m1:Method)-[:CALLS]->(m2:Method) WHERE (m2.is_setter OR m2.is_getter) AND (cl)-[:CLASS_OWNS_METHOD]->(m2) SET a.has_IGS=true " +
                     "RETURN a.commit_number as commit_number, m1.app_key as key";
-            if(details){
+            if (details) {
                 query += ",m1.full_name + m2.full_name as instance, a.commit_status as commit_status ";
-            }else{
+            } else {
                 query += ",count(m1) as IGS";
             }
             Result result = graphDatabaseService.execute(query);
             queryEngine.resultToCSV(result, "_IGS.csv");
             ignored.success();
         }
+    }
+
+    @Override
+    public Result fetchResult(boolean details) throws CypherException {
+        return null;
     }
 }

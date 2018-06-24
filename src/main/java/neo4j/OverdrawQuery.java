@@ -22,15 +22,13 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
-
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
 public class OverdrawQuery extends Query {
 
     private OverdrawQuery(QueryEngine queryEngine) {
-        super(queryEngine);
+        super(queryEngine, "UIO");
     }
 
     public static OverdrawQuery createOverdrawQuery(QueryEngine queryEngine) {
@@ -38,19 +36,20 @@ public class OverdrawQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public Result fetchResult(boolean details) throws CypherException {
+        Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:\"onDraw\"})-[:METHOD_OWNS_ARGUMENT]->(:Argument{position:0,name:\"android.graphics.Canvas\"}) \n" +
                     "WHERE NOT (n)-[:CALLS]->(:ExternalMethod{full_name:\"clipRect#android.graphics.Canvas\"}) AND NOT (n)-[:CALLS]->(:ExternalMethod{full_name:\"quickReject#android.graphics.Canvas\"})\n" +
                     " SET a.has_UIO=true RETURN a.commit_number as commit_number, n.app_key as key";
-            if(details){
+            if (details) {
                 query += ", n.full_name as instance, a.commit_status as commit_status";
-            }else{
+            } else {
                 query += ",count(n) as UIO";
             }
-            Result result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_UIO.csv");
+            result = graphDatabaseService.execute(query);
             ignored.success();
         }
+        return result;
     }
 }
