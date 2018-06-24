@@ -22,6 +22,9 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
@@ -37,8 +40,8 @@ public class UnsupportedHardwareAccelerationQuery extends Query {
 
 
     @Override
-    public Result fetchResult(boolean details) throws CypherException {
-        Result result;
+    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
+        List<Map<String, Object>> result;
         String[] uhas = {
                 "drawPicture#android.graphics.Canvas",
                 "drawVertices#android.graphics.Canvas",
@@ -62,7 +65,7 @@ public class UnsupportedHardwareAccelerationQuery extends Query {
             query += ",count(m) as UHA";
         }
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            result = graphDatabaseService.execute(query);
+            result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }
         return result;

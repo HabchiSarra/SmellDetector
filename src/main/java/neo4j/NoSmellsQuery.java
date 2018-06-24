@@ -4,6 +4,9 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by sarra on 24/07/17.
  */
@@ -13,8 +16,8 @@ public class NoSmellsQuery extends Query {
     }
 
     @Override
-    public Result fetchResult(boolean details) throws CypherException {
-        Result result;
+    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
+        List<Map<String, Object>> result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (a:App) where not( exists(a.has_IGS) OR exists(a.has_LIC)" +
                     "OR exists(a.has_IOD) OR exists(a.has_MIM) OR exists(a.has_IWR) OR exists(a.has_NLMR)" +
@@ -25,7 +28,8 @@ public class NoSmellsQuery extends Query {
             } else {
                 query += ",count(n) as NOSMELL";
             }
-            result = graphDatabaseService.execute(query);
+            result = queryEngine.toMap(graphDatabaseService.execute(query));
+            ignored.success();
         }
         return result;
     }

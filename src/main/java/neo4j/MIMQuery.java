@@ -19,8 +19,10 @@
 package neo4j;
 
 import org.neo4j.cypher.CypherException;
-import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Geoffrey Hecht on 18/08/15.
@@ -36,8 +38,8 @@ public class MIMQuery extends Query {
     }
 
     @Override
-    public Result fetchResult(boolean details) throws CypherException {
-        Result result;
+    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
+        List<Map<String, Object>> result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m1:Method) WHERE m1.number_of_callers>0 AND NOT exists(m1.is_static) AND NOT exists(m1.is_override) AND NOT (m1)-[:USES]->(:Variable) AND NOT (m1)-[:CALLS]->(:ExternalMethod) AND NOT (m1)-[:CALLS]->(:Method) AND NOT exists(m1.is_init) SET a.has_MIM=true " +
                     "RETURN a.commit_number as commit_number, m1.app_key as key";
@@ -46,7 +48,7 @@ public class MIMQuery extends Query {
             } else {
                 query += ",count(m1) as MIM";
             }
-            result = graphDatabaseService.execute(query);
+            result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }
         return result;

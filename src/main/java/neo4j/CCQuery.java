@@ -48,8 +48,8 @@ public class CCQuery extends FuzzyQuery {
     }
 
     @Override
-    public Result fetchResult(boolean details) throws CypherException {
-        Result result;
+    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
+        List<Map<String, Object>> result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (cl:Class) WHERE cl.class_complexity > " + veryHigh + " RETURN cl.app_key as app_key";
             if (details) {
@@ -57,7 +57,7 @@ public class CCQuery extends FuzzyQuery {
             } else {
                 query += ",count(cl) as CC";
             }
-            result = graphDatabaseService.execute(query);
+            result = queryEngine.toMap(graphDatabaseService.execute(query));
         }
         return result;
     }

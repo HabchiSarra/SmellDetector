@@ -22,6 +22,9 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
@@ -36,8 +39,8 @@ public class UnsuitedLRUCacheSizeQuery extends Query {
     }
 
     @Override
-    public Result fetchResult(boolean details) throws CypherException {
-        Result result;
+    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
+        List<Map<String, Object>> result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "Match (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod {full_name:'<init>#android.util.LruCache'}) WHERE NOT (m)-[:CALLS]->(:ExternalMethod {full_name:'getMemoryClass#android.app.ActivityManager'}) SET a.has_UCS=true " +
                     "return a.commit_number as commit_number, m.app_key as key";
@@ -46,7 +49,7 @@ public class UnsuitedLRUCacheSizeQuery extends Query {
             } else {
                 query += ",count(m) as UCS";
             }
-            result = graphDatabaseService.execute(query);
+            result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }
         return result;

@@ -19,10 +19,10 @@
 package neo4j;
 
 import org.neo4j.cypher.CypherException;
-import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Geoffrey Hecht on 18/08/15.
@@ -38,7 +38,8 @@ public class IGSQuery extends Query {
     }
 
     @Override
-    public void execute(boolean details) throws CypherException, IOException {
+    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
+        List<Map<String, Object>> result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class)-[:CLASS_OWNS_METHOD]->(m1:Method)-[:CALLS]->(m2:Method) WHERE (m2.is_setter OR m2.is_getter) AND (cl)-[:CLASS_OWNS_METHOD]->(m2) SET a.has_IGS=true " +
                     "RETURN a.commit_number as commit_number, m1.app_key as key";
@@ -47,14 +48,9 @@ public class IGSQuery extends Query {
             } else {
                 query += ",count(m1) as IGS";
             }
-            Result result = graphDatabaseService.execute(query);
-            queryEngine.resultToCSV(result, "_IGS.csv");
+            result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }
-    }
-
-    @Override
-    public Result fetchResult(boolean details) throws CypherException {
-        return null;
+        return result;
     }
 }

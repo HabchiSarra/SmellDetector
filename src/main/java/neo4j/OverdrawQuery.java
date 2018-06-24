@@ -22,6 +22,9 @@ import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by Geoffrey Hecht on 18/08/15.
  */
@@ -36,8 +39,8 @@ public class OverdrawQuery extends Query {
     }
 
     @Override
-    public Result fetchResult(boolean details) throws CypherException {
-        Result result;
+    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
+        List<Map<String, Object>> result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:\"onDraw\"})-[:METHOD_OWNS_ARGUMENT]->(:Argument{position:0,name:\"android.graphics.Canvas\"}) \n" +
                     "WHERE NOT (n)-[:CALLS]->(:ExternalMethod{full_name:\"clipRect#android.graphics.Canvas\"}) AND NOT (n)-[:CALLS]->(:ExternalMethod{full_name:\"quickReject#android.graphics.Canvas\"})\n" +
@@ -47,7 +50,7 @@ public class OverdrawQuery extends Query {
             } else {
                 query += ",count(n) as UIO";
             }
-            result = graphDatabaseService.execute(query);
+            result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }
         return result;

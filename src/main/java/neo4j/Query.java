@@ -23,6 +23,9 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Geoffrey Hecht on 17/08/15.
@@ -40,12 +43,12 @@ public abstract class Query {
 
 
     public void execute(boolean details) throws CypherException, IOException {
-        Result result = fetchResult(details);
+        List<Map<String, Object>> result = fetchResult(details);
         queryEngine.resultToCSV(result, "_" + smellName + ".csv");
 
     }
 
-    public abstract Result fetchResult(boolean details) throws CypherException;
+    public abstract List<Map<String, Object>> fetchResult(boolean details) throws CypherException;
 
     public String getSmellName() {
         return smellName;

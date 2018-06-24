@@ -72,7 +72,7 @@ public class QueryEngine {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             result = graphDatabaseService.execute("MATCH (a:App) RETURN  a.app_key as app_key, a.category as category,a.package as package, a.version_code as version_code, a.date_analysis as date_analysis,a.number_of_classes as number_of_classes,a.size as size,a.rating as rating,a.nb_download as nb_download, a.number_of_methods as number_of_methods, a.number_of_activities as number_of_activities,a.number_of_services as number_of_services,a.number_of_interfaces as number_of_interfaces,a.number_of_abstract_classes as number_of_abstract_classes,a.number_of_broadcast_receivers as number_of_broadcast_receivers,a.number_of_content_providers as number_of_content_providers, a.number_of_variables as number_of_variables, a.number_of_views as number_of_views, a.number_of_inner_classes as number_of_inner_classes, a.number_of_async_tasks as number_of_async_tasks");
-            resultToCSV(result, "_ANALYZED.csv");
+            resultToCSV(toMap(result), "_ANALYZED.csv");
         }
     }
 
@@ -81,7 +81,7 @@ public class QueryEngine {
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             String query = "MATCH (n:" + nodeType + ") RETURN n.app_key as app_key, n.name as name, n." + property + " as " + property;
             result = graphDatabaseService.execute(query);
-            resultToCSV(result, suffix);
+            resultToCSV(toMap(result), suffix);
         }
     }
 
@@ -102,11 +102,11 @@ public class QueryEngine {
     }
 
 
-    public void resultToCSV(Result result, String csvSuffix) throws IOException {
+    public void resultToCSV(List<Map<String, Object>> result, String csvSuffix) throws IOException {
         String name = csvPrefix + csvSuffix;
         FileWriter fw = new FileWriter(name);
         BufferedWriter writer = new BufferedWriter(fw);
-        List<String> columns = result.columns();
+        List<String> columns = result.isEmpty() ? new ArrayList<String>() : new ArrayList<>(result.get(0).keySet());
         Object val;
         int i;
         int columns_size = columns.size() - 1;
@@ -116,8 +116,7 @@ public class QueryEngine {
         }
         writer.write(columns.get(i));
         writer.newLine();
-        while (result.hasNext()) {
-            Map<String, Object> row = result.next();
+        for (Map<String, Object> row : result) {
             for (i = 0; i < columns_size; i++) {
                 val = row.get(columns.get(i));
                 if (val != null) {
@@ -317,7 +316,7 @@ public class QueryEngine {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             result = graphDatabaseService.execute("MATCH (n:Variable) return n.app_key as app_key, count(n) as nb_variables");
-            resultToCSV(result, "_COUNT_VARIABLE.csv");
+            resultToCSV(toMap(result), "_COUNT_VARIABLE.csv");
         }
     }
 
@@ -325,7 +324,7 @@ public class QueryEngine {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             result = graphDatabaseService.execute("MATCH (n:Class) WHERE exists(n.is_inner_class) return n.app_key as app_key,count(n) as nb_inner_classes");
-            resultToCSV(result, "_COUNT_INNER.csv");
+            resultToCSV(toMap(result), "_COUNT_INNER.csv");
         }
     }
 
@@ -333,7 +332,7 @@ public class QueryEngine {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             result = graphDatabaseService.execute("MATCH (n:Class{is_async_task:true}) return n.app_key as app_key,count(n) as number_of_async");
-            resultToCSV(result, "_COUNT_ASYNC.csv");
+            resultToCSV(toMap(result), "_COUNT_ASYNC.csv");
         }
     }
 
@@ -341,7 +340,7 @@ public class QueryEngine {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             result = graphDatabaseService.execute("MATCH (n:Class{is_view:true}) return n.app_key as app_key,count(n) as number_of_views");
-            resultToCSV(result, "_COUNT_VIEWS.csv");
+            resultToCSV(toMap(result), "_COUNT_VIEWS.csv");
         }
     }
 
@@ -349,7 +348,16 @@ public class QueryEngine {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             result = graphDatabaseService.execute(request);
-            resultToCSV(result, "_CUSTOM.csv");
+            resultToCSV(toMap(result), "_CUSTOM.csv");
         }
+    }
+
+    protected List<Map<String, Object>> toMap(Result result) {
+        List<Map<String, Object>> output = new ArrayList<>();
+        while (result.hasNext()) {
+            Map<String, Object> entry = result.next();
+            output.add(entry);
+        }
+        return output;
     }
 }
