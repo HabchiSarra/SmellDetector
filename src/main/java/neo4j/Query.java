@@ -47,4 +47,7 @@ public abstract class Query {
 
     public abstract Result fetchResult(boolean details) throws CypherException;
 
+    public String getSmellName() {
+        return smellName;
+    }
 }
