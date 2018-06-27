@@ -161,19 +161,19 @@ public class ClassProcessor extends TypeProcessor<CtClass> {
             } catch (ClassNotFoundException | NoClassDefFoundError e) {
                 logger.warn("Class Not Found or Definition Not Found ; message : " + e.getLocalizedMessage());
                 logger.debug("switching to heuristic mode");
-                if (ctClass.getSimpleName().endsWith("Activity")) {
+                if (ctClass.getSimpleName().endsWith("Activity")||ctClass.getSuperclass().getQualifiedName().endsWith("Activity")) {
                     isActivity = true;
-                } else if (ctClass.getSimpleName().endsWith("ContentProvider")) {
+                } else if (ctClass.getSimpleName().endsWith("ContentProvider")||ctClass.getSuperclass().getQualifiedName().endsWith("ContentProvider")) {
                     isContentProvider = true;
-                } else if (ctClass.getSimpleName().endsWith("AsyncTask")) {
+                } else if (ctClass.getSimpleName().endsWith("AsyncTask")||ctClass.getSuperclass().getQualifiedName().endsWith("AsyncTask")) {
                     isAsyncTask = true;
-                } else if (ctClass.getSimpleName().endsWith("View")) {
+                } else if (ctClass.getSimpleName().endsWith("View")||ctClass.getSuperclass().getQualifiedName().endsWith("View")) {
                     isView = true;
-                } else if (ctClass.getSimpleName().endsWith("BroadcastReceiver")) {
+                } else if (ctClass.getSimpleName().endsWith("BroadcastReceiver")||ctClass.getSuperclass().getQualifiedName().endsWith("BroadcastReceiver")) {
                     isBroadcastReceiver = true;
-                } else if (ctClass.getSimpleName().endsWith("Service")) {
+                } else if (ctClass.getSimpleName().endsWith("Service")||ctClass.getSuperclass().getQualifiedName().endsWith("Service")) {
                     isService = true;
-                } else if (ctClass.getSimpleName().endsWith("Application")) {
+                } else if (ctClass.getSimpleName().endsWith("Application")||ctClass.getSuperclass().getQualifiedName().endsWith("Application")) {
                     isApplication = true;
                 }
             }
