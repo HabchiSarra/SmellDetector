@@ -39,9 +39,6 @@ public class MainProcessor {
         Launcher launcher = new Launcher();
         launcher.addInputResource(appPath);
         launcher.getEnvironment().setNoClasspath(true);
-
-//        update_classpath(launcher);
-
         launcher.buildModel();
         AbstractProcessor<CtClass> classProcessor = new ClassProcessor();
         AbstractProcessor<CtInterface> interfaceProcessor = new InterfaceProcessor();

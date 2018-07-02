@@ -42,11 +42,11 @@ public class OverdrawQuery extends Query {
     public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
         List<Map<String, Object>> result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:\"onDraw\"})-[:METHOD_OWNS_ARGUMENT]->(:Argument{position:0,name:\"android.graphics.Canvas\"}) \n" +
+            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:\"onDraw\"})-[:METHOD_OWNS_ARGUMENT]->(:Argument{position:0,name:\"android.graphics.Canvas\"}) \n" +
                     "WHERE NOT (n)-[:CALLS]->(:ExternalMethod{full_name:\"clipRect#android.graphics.Canvas\"}) AND NOT (n)-[:CALLS]->(:ExternalMethod{full_name:\"quickReject#android.graphics.Canvas\"})\n" +
-                    " SET a.has_UIO=true RETURN a.commit_number as commit_number, n.app_key as key";
+                    "  RETURN DISTINCT a.commit_number as commit_number, n.app_key as key, cl.file_path as file_path";
             if (details) {
-                query += ", n.full_name as instance, a.commit_status as commit_status";
+                query += ", n.full_name as instance";
             } else {
                 query += ",count(n) as UIO";
             }

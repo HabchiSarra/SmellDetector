@@ -39,10 +39,10 @@ public class NLMRQuery extends Query {
     public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
         List<Map<String, Object>> result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class) WHERE exists(cl.is_activity) AND NOT (cl:Class)-[:CLASS_OWNS_METHOD]->(:Method { name: 'onLowMemory' }) AND NOT (cl)-[:EXTENDS]->(:Class) SET a.has_NLMR=true " +
-                    "RETURN a.commit_number as commit_number, cl.app_key as key";
+            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class) WHERE exists(cl.is_activity) AND NOT (cl:Class)-[:CLASS_OWNS_METHOD]->(:Method { name: 'onLowMemory' }) AND NOT (cl)-[:EXTENDS]->(:Class) " +
+                    "RETURN DISTINCT a.commit_number as commit_number, cl.app_key as key, cl.file_path as file_path";
             if (details) {
-                query += ",cl.name as instance, a.commit_status as commit_status";
+                query += ",cl.name as instance";
             } else {
                 query += ",count(cl) as NLMR";
             }

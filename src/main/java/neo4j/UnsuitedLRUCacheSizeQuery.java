@@ -42,10 +42,10 @@ public class UnsuitedLRUCacheSizeQuery extends Query {
     public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
         List<Map<String, Object>> result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "Match (a:App)-[:APP_OWNS_CLASS]->(:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod {full_name:'<init>#android.util.LruCache'}) WHERE NOT (m)-[:CALLS]->(:ExternalMethod {full_name:'getMemoryClass#android.app.ActivityManager'}) SET a.has_UCS=true " +
-                    "return a.commit_number as commit_number, m.app_key as key";
+            String query = "Match (a:App)-[:APP_OWNS_CLASS]->(cl:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod {full_name:'<init>#android.util.LruCache'}) WHERE NOT (m)-[:CALLS]->(:ExternalMethod {full_name:'getMemoryClass#android.app.ActivityManager'})  " +
+                    "return DISTINCT a.commit_number as commit_number, m.app_key as key, cl.file_path as file_path";
             if (details) {
-                query += ",m.full_name as instance, a.commit_status as commit_status";
+                query += ",m.full_name as instance";
             } else {
                 query += ",count(m) as UCS";
             }

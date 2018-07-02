@@ -28,6 +28,8 @@ public class InterfaceProcessor extends TypeProcessor<CtInterface> {
     @Override
     public void process(CtInterface ctType) {
         String qualifiedName = ctType.getQualifiedName();
+        String absolutePath= ctType.getPosition().getFile().getAbsolutePath();
+        String relativePath = absolutePath.replaceFirst(MainProcessor.currentApp.getPath(),"");
         if (ctType.isAnonymous()) {
             String[] splitName = qualifiedName.split("\\$");
             qualifiedName = splitName[0] + "$" +
@@ -38,7 +40,7 @@ public class InterfaceProcessor extends TypeProcessor<CtInterface> {
         if (paprikaModifiers == null) {
             paprikaModifiers = PaprikaModifiers.DEFAULT;
         }
-        PaprikaClass paprikaClass = PaprikaClass.createPaprikaClass(qualifiedName, MainProcessor.currentApp, paprikaModifiers);
+        PaprikaClass paprikaClass = PaprikaClass.createPaprikaClass(qualifiedName, MainProcessor.currentApp, paprikaModifiers,relativePath);
         MainProcessor.currentClass = paprikaClass;
         handleProperties(ctType, paprikaClass);
         handleAttachments(ctType, paprikaClass);

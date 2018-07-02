@@ -86,8 +86,12 @@ public class MethodProcessor extends ExecutableProcessor<CtMethod> {
         if (element.getParameters().size() != 1) {
             return false;
         }
-        if (!(ctVariableRead.getVariable().getDeclaration().equals(element.getParameters().get(0)))) {
-            return false;
+        try {
+            if ((ctVariableRead.getVariable().getDeclaration()!=null) && !(ctVariableRead.getVariable().getDeclaration().equals(element.getParameters().get(0)))) {
+                return false;
+            }
+        }catch (NullPointerException npe){
+            System.out.println(npe.getCause());
         }
         CtFieldWrite returnedExpression = (CtFieldWrite) ((CtAssignment) statement).getAssigned();
         if (returnedExpression.getTarget() instanceof CtThisAccess) {

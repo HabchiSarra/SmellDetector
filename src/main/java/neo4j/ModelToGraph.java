@@ -56,15 +56,15 @@ public class ModelToGraph {
             appNode = graphDatabaseService.createNode(appLabel);
             appNode.setProperty("app_key", key);
             appNode.setProperty("name", appName);
-            appNode.setProperty("version", paprikaApp.getVersion());
+            //appNode.setProperty("version", paprikaApp.getVersion());
             appNode.setProperty("commit_number", paprikaApp.getCommitNumber());
-            appNode.setProperty("commit_status", paprikaApp.getStatus());
-            appNode.setProperty("sdk_version", paprikaApp.getSdkVersion());
-            appNode.setProperty("analyzed_module", paprikaApp.getModule());
+            //appNode.setProperty("commit_status", paprikaApp.getStatus());
+            //appNode.setProperty("sdk_version", paprikaApp.getSdkVersion());
+            //appNode.setProperty("analyzed_module", paprikaApp.getModule());
             Date date = new Date();
             SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
             appNode.setProperty("date_analysis", simpleFormat.format(date));
-            appNode.setProperty("path", paprikaApp.getPath());
+            //appNode.setProperty("path", paprikaApp.getPath());
 
             Node classNode;
             for (PaprikaClass paprikaClass : paprikaApp.getPaprikaClasses()) {
@@ -102,6 +102,7 @@ public class ModelToGraph {
         classNode.setProperty("app_key", key);
         classNode.setProperty("name", paprikaClass.getName());
         classNode.setProperty("modifier", paprikaClass.getModifier().toString().toLowerCase());
+        classNode.setProperty("file_path", paprikaClass.getPath());
         classNode.setProperty("app_name", appName);
         if (paprikaClass.getParentName() != null) {
             classNode.setProperty("parent_name", paprikaClass.getParentName());

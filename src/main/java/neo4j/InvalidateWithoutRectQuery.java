@@ -42,11 +42,11 @@ public class InvalidateWithoutRectQuery extends Query {
     public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
         List<Map<String, Object>> result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:'onDraw'})-[:CALLS]->(e:ExternalMethod{name:'invalidate'}) " +
-                    "WHERE NOT (e)-[:METHOD_OWNS_ARGUMENT]->(:ExternalArgument) SET a.has_IWR=true " +
-                    "return a.commit_number as commit_number, n.app_key as key";
+            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class{is_view:true})-[:CLASS_OWNS_METHOD]->(n:Method{name:'onDraw'})-[:CALLS]->(e:ExternalMethod{name:'invalidate'}) " +
+                    "WHERE NOT (e)-[:METHOD_OWNS_ARGUMENT]->(:ExternalArgument) " +
+                    "return DISTINCT a.commit_number as commit_number, n.app_key as key, cl.file_path as file_path";
             if (details) {
-                query += ",n.full_name as instance, a.commit_status as commit_status";
+                query += ",n.full_name as instance";
             } else {
                 query += ",count(n) as IWR";
             }

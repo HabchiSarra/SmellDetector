@@ -37,6 +37,9 @@ public class ClassProcessor extends TypeProcessor<CtClass> {
     @Override
     public void process(CtClass ctType) {
         String qualifiedName = ctType.getQualifiedName();
+        //System.out.println("Path: "+ ctType.);
+        String absolutePath= ctType.getPosition().getFile().getAbsolutePath();
+        String relativePath = absolutePath.replaceFirst(MainProcessor.currentApp.getPath(),"");
         if (ctType.isAnonymous()) {
             String[] splitName = qualifiedName.split("\\$");
             qualifiedName = splitName[0] + "$" +
@@ -47,7 +50,7 @@ public class ClassProcessor extends TypeProcessor<CtClass> {
         if (paprikaModifiers == null) {
             paprikaModifiers = PaprikaModifiers.DEFAULT;
         }
-        PaprikaClass paprikaClass = PaprikaClass.createPaprikaClass(qualifiedName, MainProcessor.currentApp, paprikaModifiers);
+        PaprikaClass paprikaClass = PaprikaClass.createPaprikaClass(qualifiedName, MainProcessor.currentApp, paprikaModifiers, relativePath);
         MainProcessor.currentClass = paprikaClass;
         handleProperties(ctType, paprikaClass);
         handleAttachments(ctType, paprikaClass);

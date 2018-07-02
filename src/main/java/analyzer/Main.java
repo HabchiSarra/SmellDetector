@@ -7,6 +7,7 @@ import neo4j.*;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.*;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -87,6 +88,7 @@ public class Main {
     public static void runAnalysis(Namespace arg) throws Exception {
         logger.info("Collecting metrics");
         String path = arg.getString("folder");
+        path= new File(path).getAbsolutePath();
         String name = arg.getString("name");
         int version = Integer.valueOf(arg.getString("version"));
         String key = arg.getString("key");

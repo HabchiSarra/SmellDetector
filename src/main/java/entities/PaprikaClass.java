@@ -49,6 +49,15 @@ public class PaprikaClass extends Entity{
     private boolean isInnerClass;
     private int depthOfInheritance;
     private ArrayList<String> interfacesNames;
+    private String path;
+
+    public String getPath() {
+        return path;
+    }
+
+    public int getComplexity() {
+        return complexity;
+    }
 
     public PaprikaModifiers getModifier() {
         return modifier;
@@ -91,11 +100,43 @@ public class PaprikaClass extends Entity{
         this.isView=false;
         this.depthOfInheritance=0;
         this.interfacesNames=new ArrayList<>();
-        complexity=0;
+        this.complexity=0;
     }
+
+    private PaprikaClass(String name, PaprikaApp paprikaApp, PaprikaModifiers modifier, String path) {
+        this.setName(name);
+        this.path=path;
+        this.paprikaApp = paprikaApp;
+        this.children = 0;
+        this.paprikaMethods  = new HashSet<>();
+        this.paprikaVariables = new HashSet<>();
+        this.coupled = new HashSet<>();
+        this.interfaces = new HashSet<>();
+        this.modifier = modifier;
+        this.isInterface=false;
+        this.isStatic=false;
+        this.isActivity=false;
+        this.isApplication=false;
+        this.isAsyncTask=false;
+        this.isService=false;
+        this.isContentProvider=false;
+        this.isBroadcastReceiver=false;
+        this.isInnerClass=false;
+        this.isView=false;
+        this.depthOfInheritance=0;
+        this.interfacesNames=new ArrayList<>();
+        this.complexity=0;
+    }
+
 
     public static PaprikaClass createPaprikaClass(String name, PaprikaApp paprikaApp, PaprikaModifiers modifier) {
         PaprikaClass paprikaClass = new PaprikaClass(name, paprikaApp, modifier);
+        paprikaApp.addPaprikaClass(paprikaClass);
+        return paprikaClass;
+    }
+
+    public static PaprikaClass createPaprikaClass(String name, PaprikaApp paprikaApp, PaprikaModifiers modifier, String path) {
+        PaprikaClass paprikaClass = new PaprikaClass(name, paprikaApp, modifier, path);
         paprikaApp.addPaprikaClass(paprikaClass);
         return paprikaClass;
     }
