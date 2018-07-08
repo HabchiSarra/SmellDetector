@@ -46,7 +46,7 @@ public class NLMRQuery extends Query {
             } else {
                 query += ",count(cl) as NLMR";
             }
-            query += " ORDER BY app_key";
+            query += " ORDER BY key";
             result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }

@@ -50,7 +50,7 @@ public class OverdrawQuery extends Query {
             } else {
                 query += ",count(n) as UIO";
             }
-            query += " ORDER BY app_key";
+            query += " ORDER BY key";
             result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }

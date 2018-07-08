@@ -48,7 +48,7 @@ public class MIMQuery extends Query {
             } else {
                 query += ",count(m1) as MIM";
             }
-            query += " ORDER BY app_key";
+            query += " ORDER BY key";
             result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }

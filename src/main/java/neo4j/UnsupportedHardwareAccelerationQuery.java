@@ -64,7 +64,7 @@ public class UnsupportedHardwareAccelerationQuery extends Query {
         } else {
             query += ",count(m) as UHA";
         }
-        query += " ORDER BY app_key";
+        query += " ORDER BY key";
         try (Transaction ignored = graphDatabaseService.beginTx()) {
             result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
