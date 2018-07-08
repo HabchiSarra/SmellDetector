@@ -50,6 +50,7 @@ public class InvalidateWithoutRectQuery extends Query {
             } else {
                 query += ",count(n) as IWR";
             }
+            query += " ORDER BY app_key";
             result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }

@@ -49,6 +49,7 @@ public class HashMapUsageQuery extends Query {
             } else {
                 query += ", count(m) as HMU";
             }
+            query += " ORDER BY app_key";
             result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }

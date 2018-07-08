@@ -49,6 +49,7 @@ public class UnsuitedLRUCacheSizeQuery extends Query {
             } else {
                 query += ",count(m) as UCS";
             }
+            query += " ORDER BY app_key";
             result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }

@@ -51,6 +51,7 @@ public class LICQuery extends Query {
             } else {
                 query += ",count(cl) as LIC";
             }
+            query += " ORDER BY app_key";
             result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }
