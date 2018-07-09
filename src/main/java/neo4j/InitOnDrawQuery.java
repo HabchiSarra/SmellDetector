@@ -49,7 +49,7 @@ public class InitOnDrawQuery extends Query {
             } else {
                 query += ",count(n) as IOD";
             }
-            query += " ORDER BY key";
+            query += " ORDER BY commit_number";
             result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }

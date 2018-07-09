@@ -49,7 +49,7 @@ public class UnsuitedLRUCacheSizeQuery extends Query {
             } else {
                 query += ",count(m) as UCS";
             }
-            query += " ORDER BY key";
+            query += " ORDER BY commit_number";
             result = queryEngine.toMap(graphDatabaseService.execute(query));
             ignored.success();
         }
