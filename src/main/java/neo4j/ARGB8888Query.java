@@ -18,8 +18,6 @@
 
 package neo4j;
 
-import org.neo4j.cypher.CypherException;
-import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
 import java.util.List;
@@ -39,16 +37,12 @@ public class ARGB8888Query extends Query {
     }
 
     @Override
-    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
-        List<Map<String, Object>> result;
-        try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (e: ExternalArgument) WHERE exists(e.is_argb_8888) RETURN e";
-            if (details) {
-                query += ", count(e) as ARGB8888";
-            }
-            result = queryEngine.toMap(graphDatabaseService.execute(query));
+    protected String getQuery(boolean details) {
+        String query = "MATCH (e: ExternalArgument) WHERE exists(e.is_argb_8888) RETURN e";
+        if (details) {
+            query += ", count(e) as ARGB8888";
         }
-        return result;
+        return query;
     }
 
 }

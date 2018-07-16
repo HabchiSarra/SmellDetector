@@ -48,18 +48,14 @@ public class LMQuery extends FuzzyQuery {
     }
 
     @Override
-    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
-        List<Map<String, Object>> result;
-        try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (m:Method) WHERE m.number_of_instructions >" + veryHigh + " RETURN m.app_key as app_key";
-            if (details) {
-                query += ",m.full_name as full_name ";
-            } else {
-                query += ",count(m) as LM";
-            }
-            result = queryEngine.toMap(graphDatabaseService.execute(query));
+    protected String getQuery(boolean details) {
+        String query = "MATCH (m:Method) WHERE m.number_of_instructions >" + veryHigh + " RETURN m.app_key as app_key";
+        if (details) {
+            query += ",m.full_name as full_name ";
+        } else {
+            query += ",count(m) as LM";
         }
-        return result;
+        return query;
     }
 
     public void executeFuzzy(boolean details) throws CypherException, IOException {

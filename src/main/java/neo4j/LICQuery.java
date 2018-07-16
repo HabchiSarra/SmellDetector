@@ -41,21 +41,15 @@ public class LICQuery extends Query {
 
 
     @Override
-    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
-        List<Map<String, Object>> result;
-        try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class) WHERE exists(cl.is_inner_class) AND NOT exists(cl.is_static) " +
-                    "RETURN DISTINCT a.commit_number as commit_number, cl.app_key as key, cl.file_path as file_path";
-            if (details) {
-                query += ",cl.name as instance";
-            } else {
-                query += ",count(cl) as LIC";
-            }
-            query += " ORDER BY commit_number";
-            result = queryEngine.toMap(graphDatabaseService.execute(query));
-            ignored.success();
+    protected String getQuery(boolean details) {
+        String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class) WHERE exists(cl.is_inner_class) AND NOT exists(cl.is_static) " +
+                "RETURN DISTINCT a.commit_number as commit_number, cl.app_key as key, cl.file_path as file_path";
+        if (details) {
+            query += ",cl.name as instance";
+        } else {
+            query += ",count(cl) as LIC";
         }
-        return result;
+        return query;
     }
 
 

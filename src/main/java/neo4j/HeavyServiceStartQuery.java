@@ -51,18 +51,14 @@ public class HeavyServiceStartQuery extends FuzzyQuery {
     }
 
     @Override
-    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
-        List<Map<String, Object>> result;
-        try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (c:Class{is_service:true})-[:CLASS_OWNS_METHOD]->(m:Method{name:'onStartCommand'}) WHERE m.number_of_instructions > " + veryHigh_noi + " AND m.cyclomatic_complexity>" + veryHigh_cc + " return m.app_key as app_key";
-            if (details) {
-                query += ",m.full_name as full_name";
-            } else {
-                query += ",count(m) as HSS";
-            }
-            result = queryEngine.toMap(graphDatabaseService.execute(query));
+    protected String getQuery(boolean details) {
+        String query = "MATCH (c:Class{is_service:true})-[:CLASS_OWNS_METHOD]->(m:Method{name:'onStartCommand'}) WHERE m.number_of_instructions > " + veryHigh_noi + " AND m.cyclomatic_complexity>" + veryHigh_cc + " return m.app_key as app_key";
+        if (details) {
+            query += ",m.full_name as full_name";
+        } else {
+            query += ",count(m) as HSS";
         }
-        return result;
+        return query;
     }
 
     public void executeFuzzy(boolean details) throws CypherException, IOException {

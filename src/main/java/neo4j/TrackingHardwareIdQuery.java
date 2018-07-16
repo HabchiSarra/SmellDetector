@@ -39,17 +39,13 @@ public class TrackingHardwareIdQuery extends Query {
     }
 
     @Override
-    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
-        List<Map<String, Object>> result;
-        try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (m1:Method)-[:CALLS]->(:ExternalMethod { full_name:'getDeviceId#android.telephony.TelephonyManager'}) RETURN m1.app_key as app_key";
-            if (details) {
-                query += ",m1.full_name as full_name";
-            } else {
-                query += ",count(m1) as THI";
-            }
-            result = queryEngine.toMap(graphDatabaseService.execute(query));
+    protected String getQuery(boolean details) {
+        String query = "MATCH (m1:Method)-[:CALLS]->(:ExternalMethod { full_name:'getDeviceId#android.telephony.TelephonyManager'}) RETURN m1.app_key as app_key";
+        if (details) {
+            query += ",m1.full_name as full_name";
+        } else {
+            query += ",count(m1) as THI";
         }
-        return result;
+        return query;
     }
 }

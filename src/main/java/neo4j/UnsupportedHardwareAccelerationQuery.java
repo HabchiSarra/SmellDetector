@@ -40,8 +40,7 @@ public class UnsupportedHardwareAccelerationQuery extends Query {
 
 
     @Override
-    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
-        List<Map<String, Object>> result;
+    protected String getQuery(boolean details) {
         String[] uhas = {
                 "drawPicture#android.graphics.Canvas",
                 "drawVertices#android.graphics.Canvas",
@@ -54,21 +53,16 @@ public class UnsupportedHardwareAccelerationQuery extends Query {
                 "setRasterizer#android.graphics.Paint",
                 "setSubpixelText#android.graphics.Paint"
         };
-        String query = "MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod) WHERE e.full_name='" + uhas[0] + "'";
+        StringBuilder query = new StringBuilder("MATCH (a:App)-[:APP_OWNS_CLASS]->(cl:Class)-[:CLASS_OWNS_METHOD]->(m:Method)-[:CALLS]->(e:ExternalMethod) WHERE e.full_name='" + uhas[0] + "'");
         for (int i = 1; i < uhas.length; i++) {
-            query += " OR e.full_name='" + uhas[i] + "' ";
+            query.append(" OR e.full_name='").append(uhas[i]).append("' ");
         }
-        query += " return DISTINCT a.commit_number as commit_number, m.app_key as key, cl.file_path as file_path";
+        query.append(" return DISTINCT a.commit_number as commit_number, m.app_key as key, cl.file_path as file_path");
         if (details) {
-            query += ",m.full_name as instance";
+            query.append(",m.full_name as instance");
         } else {
-            query += ",count(m) as UHA";
+            query.append(",count(m) as UHA");
         }
-        query += " ORDER BY commit_number";
-        try (Transaction ignored = graphDatabaseService.beginTx()) {
-            result = queryEngine.toMap(graphDatabaseService.execute(query));
-            ignored.success();
-        }
-        return result;
+        return query.toString();
     }
 }

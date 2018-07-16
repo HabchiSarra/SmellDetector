@@ -49,18 +49,14 @@ public class SAKQuery extends FuzzyQuery {
 
 
     @Override
-    public List<Map<String, Object>> fetchResult(boolean details) throws CypherException {
-        List<Map<String, Object>> result;
-        try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (cl:Class) WHERE exists(cl.is_interface) AND cl.number_of_methods > " + veryHigh + " RETURN cl.app_key as app_key";
-            if (details) {
-                query += ",cl.name as full_name";
-            } else {
-                query += ",count(cl) as SAK";
-            }
-            result = queryEngine.toMap(graphDatabaseService.execute(query));
+    protected String getQuery(boolean details) {
+        String query = "MATCH (cl:Class) WHERE exists(cl.is_interface) AND cl.number_of_methods > " + veryHigh + " RETURN cl.app_key as app_key";
+        if (details) {
+            query += ",cl.name as full_name";
+        } else {
+            query += ",count(cl) as SAK";
         }
-        return result;
+        return query;
     }
 
     public void executeFuzzy(boolean details) throws CypherException, IOException {
