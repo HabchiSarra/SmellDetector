@@ -33,7 +33,7 @@ public class Main {
         analyseParser.addArgument("-k", "--key").required(true).help("sha256 of the apk used as identifier");
         analyseParser.addArgument("-d", "--dependencies").required(false).help("Path to dependencies");
         analyseParser.addArgument("-l", "--libs").required(false).help("List of the external libs used by the apps (separated by :)");
-        analyseParser.addArgument("-v", "--version").required(true).help("Version of the apps");
+        analyseParser.addArgument("-v", "--version").required(false).help("Version of the apps");
         analyseParser.addArgument("-cn", "--commitNumber").required(true).help("Real commit number");
         analyseParser.addArgument("-s", "--status").required(false).help("Commit status");
         analyseParser.addArgument("-m", "--module").required(false).help("analyzed module folder");
