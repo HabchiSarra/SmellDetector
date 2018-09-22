@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
 import spoon.reflect.visitor.filter.TypeFilter;
+import spoon.support.reflect.code.CtInvocationImpl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -88,8 +89,8 @@ public abstract class ExecutableProcessor<T extends CtExecutable> {
         // Thanks to spoon we have to use a CtAbstractInvocation
         List<CtAbstractInvocation> invocations = ctConstructor.getElements(new TypeFilter<>(CtAbstractInvocation.class));
         for (CtAbstractInvocation invocation : invocations) {
-            targetName = getTarget(invocation);
             executable = invocation.getExecutable().getSimpleName();
+            targetName = getTarget(invocation);
             if (invocation.getExecutable().getType() != null) {
                 type = invocation.getExecutable().getType().getQualifiedName();
             }
@@ -99,17 +100,11 @@ public abstract class ExecutableProcessor<T extends CtExecutable> {
         }
     }
 
-    private String getTarget(CtAbstractInvocation ctInvocation){
-        CtExpression newTarget = (ctInvocation instanceof CtTargetedExpression) ?
-                ((CtTargetedExpression) ctInvocation).getTarget() : null;
-        if (newTarget != null && newTarget instanceof CtInvocation) {
-            return getTarget((CtInvocation) newTarget);
-        } else {
-            try {
-                return ctInvocation.getExecutable().getDeclaringType().getQualifiedName();
-            } catch (NullPointerException nullPointerException) {
-                logger.warn("Could not find qualified name for constructor call: " + ctInvocation.toString() + " (" + nullPointerException.getMessage() + ")");
-            }
+    private String getTarget(CtAbstractInvocation ctInvocation) {
+        try {
+            return ctInvocation.getExecutable().getDeclaringType().getQualifiedName();
+        } catch (NullPointerException nullPointerException) {
+            logger.warn("Could not find qualified name for method call: " + ctInvocation.toString() + " (" + nullPointerException.getMessage() + ")");
         }
         return null;
     }
