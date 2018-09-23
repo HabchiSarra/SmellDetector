@@ -88,9 +88,9 @@ public class Main {
     public static void runAnalysis(Namespace arg) throws Exception {
         logger.info("Collecting metrics");
         String path = arg.getString("folder");
-        path= new File(path).getAbsolutePath();
+        path = new File(path).getAbsolutePath();
         String name = arg.getString("name");
-        int version = Integer.valueOf(arg.getString("version"));
+        int version = arg.getString("version") != null ? Integer.valueOf(arg.getString("version")) : -1;
         String key = arg.getString("key");
         String sdkPath = arg.getString("androidJar");
         String jarsPath = arg.getString("dependencies");
