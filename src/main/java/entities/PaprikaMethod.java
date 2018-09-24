@@ -45,6 +45,15 @@ public class PaprikaMethod extends Entity{
     private boolean isGetter;
     private boolean isSetter;
     private boolean isStatic;
+    private boolean isOverride;
+
+    public boolean isOverride() {
+        return isOverride;
+    }
+
+    public void setOverride(boolean override) {
+        isOverride = override;
+    }
 
     public String getReturnType() {
         return returnType;
@@ -71,6 +80,7 @@ public class PaprikaMethod extends Entity{
         this.isSetter=false;
         this.isGetter=false;
         this.isStatic=false;
+        this.isOverride=false;
     }
 
     public static PaprikaMethod createPaprikaMethod(String name, PaprikaModifiers modifier, String returnType,  PaprikaClass paprikaClass) {

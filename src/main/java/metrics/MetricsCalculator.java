@@ -126,7 +126,9 @@ public class MetricsCalculator {
             if(paprikaMethod.isStatic()){
                 IsStatic.createIsStatic(paprikaMethod,true);
             }
-
+            if(paprikaMethod.isOverride()){
+                IsOverride.createIsOverride(paprikaMethod, true);
+            }
             NumberOfLines.createNumberOfLines(paprikaMethod, paprikaMethod.getNumberOfLines());
             CyclomaticComplexity.createCyclomaticComplexity(paprikaMethod, paprikaMethod.getComplexity());
         }

@@ -25,7 +25,7 @@ public class GraphCreator {
             for (InvocationData invocationData : paprikaMethod.getInvocationData()) {
                 targetClass = paprikaApp.getPaprikaClass(invocationData.getTarget());
                 if (targetClass instanceof PaprikaClass) {
-                    targetMethod = ((PaprikaClass) targetClass).getPaprikaMethod(invocationData.getMethod());
+                    targetMethod = ((PaprikaClass) targetClass).getCalledPaprikaMethod(invocationData.getMethod());
                     paprikaMethod.getPaprikaClass().coupledTo((PaprikaClass) targetClass);
                 } else {
 
