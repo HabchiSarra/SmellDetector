@@ -47,7 +47,7 @@ public class MIMQuery extends Query {
                 "AND NOT (m1)-[:CALLS]->(:ExternalMethod) " +
                 "AND NOT (m1)-[:CALLS]->(:Method) " +
                 "AND NOT exists(m1.is_init) " +
-                "AND NOT exists(cl.is_interface) w" +
+                "AND NOT exists(cl.is_interface) " +
                 "RETURN DISTINCT a.commit_number as commit_number, m1.app_key as key, cl.file_path as file_path";
         if (details) {
             query += ",m1.full_name as instance";
