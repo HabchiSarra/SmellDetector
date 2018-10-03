@@ -33,9 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by Geoffrey Hecht on 12/01/15.
- */
 public class QueryEngine {
     private static final Logger logger = LoggerFactory.getLogger(QueryEngine.class.getName());
 

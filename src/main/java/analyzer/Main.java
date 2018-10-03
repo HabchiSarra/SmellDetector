@@ -220,12 +220,10 @@ public class Main {
                 UnsupportedHardwareAccelerationQuery.createUnsupportedHardwareAccelerationQuery(queryEngine).execute(details);
                 HashMapUsageQuery.createHashMapUsageQuery(queryEngine).execute(details);
                 InvalidateWithoutRectQuery.createInvalidateWithoutRectQuery(queryEngine).execute(details);
-                ClassCounter.createClassCounter(queryEngine).execute(details);
-                MethodCounter.createMethodCounter(queryEngine).execute(details);
+                CommitSizeQuery.createCommitSize(queryEngine).execute(details);
                 break;
-            case "COUNTER":
-                ClassCounter.createClassCounter(queryEngine).execute(details);
-                MethodCounter.createMethodCounter(queryEngine).execute(details);
+            case "SIZE":
+                CommitSizeQuery.createCommitSize(queryEngine).execute(details);
                 break;
             case "FUZZY":
                 CCQuery.createCCQuery(queryEngine).executeFuzzy(details);
