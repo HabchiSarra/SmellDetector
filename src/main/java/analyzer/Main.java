@@ -63,27 +63,7 @@ public class Main {
 
     }
 
-    public static void testRun() {
-        String path = "/home/sarra/Desktop/ASE-Downloads/OLDBASE/2017-07-08/seadroid/app";
-        String name = "Seadroid";
-        String key = "new-droid";
-        int version = 1;
-        int commitNumber = 1;
-        String status = "Built";
-        String sdkPath = "/home/sarra/Android/Sdk/platforms/android-19/android.jar";
-        int sdkVersion = 19;
-        String module = "app";
-        String jarsPath = "/home/sarra/Desktop/ASE-Downloads/OLDBASE/2017-07-18/seadroid/app";
-        MainProcessor mainProcessor = new MainProcessor(name, version, commitNumber, status, key, path, sdkPath, jarsPath, sdkVersion, module);
-        mainProcessor.process();
-        GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
-        graphCreator.createClassHierarchy();
-        graphCreator.createCallGraph();
-        MetricsCalculator.calculateAppMetrics(MainProcessor.currentApp);
-        ModelToGraph modelToGraph = new ModelToGraph("/home/sarra/Desktop/ASE-Downloads/OLDBASE/17-07-2017/databases/graph.db");
-        modelToGraph.insertApp(MainProcessor.currentApp);
 
-    }
 
     public static void runAnalysis(Namespace arg) throws Exception {
         logger.info("Collecting metrics");
@@ -240,7 +220,12 @@ public class Main {
                 UnsupportedHardwareAccelerationQuery.createUnsupportedHardwareAccelerationQuery(queryEngine).execute(details);
                 HashMapUsageQuery.createHashMapUsageQuery(queryEngine).execute(details);
                 InvalidateWithoutRectQuery.createInvalidateWithoutRectQuery(queryEngine).execute(details);
-                new NoSmellsQuery(queryEngine).execute(details);
+                ClassCounter.createClassCounter(queryEngine).execute(details);
+                MethodCounter.createMethodCounter(queryEngine).execute(details);
+                break;
+            case "COUNTER":
+                ClassCounter.createClassCounter(queryEngine).execute(details);
+                MethodCounter.createMethodCounter(queryEngine).execute(details);
                 break;
             case "FUZZY":
                 CCQuery.createCCQuery(queryEngine).executeFuzzy(details);
