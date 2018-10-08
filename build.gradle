@@ -9,7 +9,7 @@ buildscript {
     }
 }
 
-group 'paprika'
+group 'fr.inria.sniffer.detector'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
@@ -39,7 +39,7 @@ dependencies {
 }
 
 apply plugin: 'application'
-mainClassName = "analyzer.Main"
+mainClassName = "fr.inria.sniffer.detector.analyzer.Main"
 
 
 
