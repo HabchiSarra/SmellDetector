@@ -15,7 +15,6 @@
  *     You should have received a copy of the GNU Affero General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package fr.inria.sniffer.detector.neo4j;
 
 import net.sourceforge.jFuzzyLogic.FIS;
@@ -62,9 +61,9 @@ public class SAKQuery extends FuzzyQuery {
     public void executeFuzzy(boolean details) throws CypherException, IOException {
         Result result;
         try (Transaction ignored = graphDatabaseService.beginTx()) {
-            String query = "MATCH (cl:Class) WHERE exists(cl.is_interface) AND cl.number_of_methods > " + high + " RETURN cl.app_key as app_key,cl.number_of_methods as number_of_methods";
+            String query = "MATCH (cl:Class) WHERE exists(cl.is_interface) AND cl.number_of_methods > " + high + " RETURN cl.app_key AS app_key,cl.number_of_methods AS number_of_methods";
             if (details) {
-                query += ",cl.name as full_name";
+                query += ",cl.name AS full_name";
             }
             result = graphDatabaseService.execute(query);
             List<String> columns = new ArrayList<>(result.columns());

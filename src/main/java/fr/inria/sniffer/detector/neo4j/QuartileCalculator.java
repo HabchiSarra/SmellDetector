@@ -18,12 +18,18 @@
 
 package fr.inria.sniffer.detector.neo4j;
 
+import net.sourceforge.jFuzzyLogic.FIS;
+import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import org.neo4j.cypher.CypherException;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -160,4 +166,5 @@ public class QuartileCalculator {
         }
         queryEngine.statsToCSV(res, "_STAT_NB_ATTRIBUTES.csv");
     }
+
 }
