@@ -349,7 +349,7 @@ public class QueryEngine {
         }
     }
 
-    protected List<Map<String, Object>> toMap(Result result) {
+    public List<Map<String, Object>> toMap(Result result) {
         List<Map<String, Object>> output = new ArrayList<>();
         while (result.hasNext()) {
             Map<String, Object> entry = result.next();
