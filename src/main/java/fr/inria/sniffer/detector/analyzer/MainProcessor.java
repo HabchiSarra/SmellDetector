@@ -24,11 +24,13 @@ import spoon.Launcher;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtInterface;
+import spoon.support.compiler.FileSystemFolder;
+import spoon.support.compiler.FilteringFolder;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by sarra on 21/02/17.
@@ -42,8 +44,14 @@ public class MainProcessor {
     String appPath;
     private String jarsPath;
     private String sdkPath;
+    private List<String> excluded;
 
-    public MainProcessor(String appName, int appVersion, int commitNumber, String status, String appKey, String appPath, String sdkPath, String jarsPath, int sdkVersion, String module) {
+    public MainProcessor(String appName, int appVersion, int commitNumber, String status, String appKey, String appPath, String sdkPath, String jarsPath, int sdkVersion, String module, List<String> excluded) {
+        if (excluded == null) {
+            this.excluded = Collections.emptyList();
+        } else {
+            this.excluded = excluded;
+        }
         this.currentApp = PaprikaApp.createPaprikaApp(appName, appVersion, commitNumber, status, appKey, appPath, sdkVersion, module);
         currentClass = null;
         currentMethod = null;
@@ -54,7 +62,14 @@ public class MainProcessor {
 
     public void process() {
         Launcher launcher = new Launcher();
-        launcher.addInputResource(appPath);
+
+        FilteringFolder filteredPath = new FilteringFolder();
+        filteredPath.addFolder(new FileSystemFolder(appPath));
+        for (String exclusionPattern : excluded) {
+            filteredPath.removeAllThatMatch(exclusionPattern);
+        }
+
+        launcher.addInputResource(filteredPath);
         launcher.getEnvironment().setNoClasspath(true);
         launcher.buildModel();
 
