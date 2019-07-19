@@ -22,7 +22,6 @@ import fr.inria.sniffer.detector.entities.PaprikaModifiers;
 import fr.inria.sniffer.detector.entities.PaprikaVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spoon.reflect.code.CtNewClass;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtField;
@@ -43,38 +42,17 @@ public class ClassProcessor extends TypeProcessor<CtClass> {
     private static final Logger logger = LoggerFactory.getLogger(ClassProcessor.class.getName());
     private static final URLClassLoader classloader;
 
+    @Override
+    public void process(CtClass ctType) {
+        super.process(ctType);
+    }
+
     static {
         if (MainProcessor.paths == null) {
             classloader = new URLClassLoader(new URL[0]);
         } else {
             classloader = new URLClassLoader(MainProcessor.paths.toArray(new URL[MainProcessor.paths.size()]));
         }
-    }
-
-    @Override
-    public void process(CtClass ctType) {
-        String qualifiedName = ctType.getQualifiedName();
-        //System.out.println("Path: "+ ctType.);
-        String absolutePath= ctType.getPosition().getFile().getAbsolutePath();
-        String relativePath = absolutePath.replaceFirst(MainProcessor.currentApp.getPath(),"");
-        if (ctType.isAnonymous()) {
-            String[] splitName = qualifiedName.split("\\$");
-            qualifiedName = splitName[0] + "$" +
-                    ((CtNewClass) ctType.getParent()).getType().getQualifiedName() + splitName[1];
-        }
-        String visibility = ctType.getVisibility() == null ? "null" : ctType.getVisibility().toString();
-        PaprikaModifiers paprikaModifiers = DataConverter.convertTextToModifier(visibility);
-        if (paprikaModifiers == null) {
-            paprikaModifiers = PaprikaModifiers.DEFAULT;
-        }
-        PaprikaClass paprikaClass = PaprikaClass.createPaprikaClass(qualifiedName, MainProcessor.currentApp, paprikaModifiers, relativePath);
-        MainProcessor.currentClass = paprikaClass;
-        handleProperties(ctType, paprikaClass);
-        handleAttachments(ctType, paprikaClass);
-        if (ctType.getQualifiedName().contains("$")) {
-            paprikaClass.setInnerClass(true);
-        }
-        processMethods(ctType);
     }
 
     @Override
