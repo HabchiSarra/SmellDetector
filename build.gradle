@@ -27,7 +27,7 @@ repositories {
 
 
 dependencies {
-    compile "fr.inria.gforge.spoon:spoon-core:7.0.0"
+    compile "fr.inria.gforge.spoon:spoon-core:7.4.0"
     compile "org.neo4j:neo4j-cypher:3.4.1"
     compile "net.sourceforge.argparse4j:argparse4j:0.7.0"
     compile fileTree(dir: 'libs', include: '*.jar')
