@@ -1,3 +1,20 @@
+/**
+ *   Sniffer - Analyze the history of Android code smells at scale.
+ *   Copyright (C) 2019 Sarra Habchi
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU Affero General Public License as published
+ *   by the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Affero General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Affero General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package fr.inria.sniffer.detector.analyzer;
 
 import fr.inria.sniffer.detector.entities.*;
@@ -10,6 +27,7 @@ import net.sourceforge.argparse4j.inf.*;
 import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +56,7 @@ public class Main {
         analyseParser.addArgument("-s", "--status").required(false).help("Commit status");
         analyseParser.addArgument("-m", "--module").required(false).help("analyzed module folder");
         analyseParser.addArgument("-sd", "--sdk").required(false).help("Sdk Version");
+        analyseParser.addArgument("-e", "--exclude").nargs("+").required(false).help("Exclude folders using java regex patterns");
 
         Subparser queryParser = subparsers.addParser("query").help("Query the database");
         queryParser.addArgument("-db", "--database").required(true).help("Path to neo4J Database folder");
@@ -83,7 +102,8 @@ public class Main {
         if (arg.getString("libs") != null) {
             libs = arg.getString("libs").split(":");
         }
-        MainProcessor mainProcessor = new MainProcessor(name, version, commitNumber, status, key, path, sdkPath, jarsPath, sdkVersion, module);
+        List<String> exclusions = arg.get("exclude");
+        MainProcessor mainProcessor = new MainProcessor(name, version, commitNumber, status, key, path, sdkPath, jarsPath, sdkVersion, module, exclusions);
         mainProcessor.process();
         GraphCreator graphCreator = new GraphCreator(MainProcessor.currentApp);
         graphCreator.createClassHierarchy();

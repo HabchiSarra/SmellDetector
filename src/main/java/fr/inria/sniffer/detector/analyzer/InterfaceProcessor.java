@@ -1,9 +1,27 @@
+/**
+ *   Sniffer - Analyze the history of Android code smells at scale.
+ *   Copyright (C) 2019 Sarra Habchi
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU Affero General Public License as published
+ *   by the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Affero General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Affero General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package fr.inria.sniffer.detector.analyzer;
 
 import fr.inria.sniffer.detector.entities.PaprikaClass;
 import fr.inria.sniffer.detector.entities.PaprikaModifiers;
 import fr.inria.sniffer.detector.entities.PaprikaVariable;
-import spoon.reflect.code.CtNewClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.declaration.CtMethod;
@@ -13,8 +31,6 @@ import spoon.reflect.reference.CtTypeReference;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class InterfaceProcessor extends TypeProcessor<CtInterface> {
     private static final Logger logger = LoggerFactory.getLogger(InterfaceProcessor.class.getName());
@@ -27,27 +43,8 @@ public class InterfaceProcessor extends TypeProcessor<CtInterface> {
 
     @Override
     public void process(CtInterface ctType) {
-        String qualifiedName = ctType.getQualifiedName();
-        String absolutePath= ctType.getPosition().getFile().getAbsolutePath();
-        String relativePath = absolutePath.replaceFirst(MainProcessor.currentApp.getPath(),"");
-        if (ctType.isAnonymous()) {
-            String[] splitName = qualifiedName.split("\\$");
-            qualifiedName = splitName[0] + "$" +
-                    ((CtNewClass) ctType.getParent()).getType().getQualifiedName() + splitName[1];
-        }
-        String visibility = ctType.getVisibility() == null ? "null" : ctType.getVisibility().toString();
-        PaprikaModifiers paprikaModifiers = DataConverter.convertTextToModifier(visibility);
-        if (paprikaModifiers == null) {
-            paprikaModifiers = PaprikaModifiers.DEFAULT;
-        }
-        PaprikaClass paprikaClass = PaprikaClass.createPaprikaClass(qualifiedName, MainProcessor.currentApp, paprikaModifiers,relativePath);
-        MainProcessor.currentClass = paprikaClass;
-        handleProperties(ctType, paprikaClass);
-        handleAttachments(ctType, paprikaClass);
-        if (ctType.getQualifiedName().contains("$")) {
-            paprikaClass.setInnerClass(true);
-        }
-        processMethods(ctType);    }
+        super.process(ctType);
+    }
 
     @Override
     public void processMethods(CtInterface ctInterface) {
