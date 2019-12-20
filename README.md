@@ -7,7 +7,7 @@ It detects the following code smells:
 from freeing the memory space of the outer class even when it is not used anymore, thus causing memory leaks.
 
 * **Member Ignoring Method (_MIM_)**: this code smell occurs when a method that is not a constructor and does not access non-static attributes is not static. As the invocation 
-of static methods is 15\%--20\% faster than dynamic invocations, the framework recommends making these methods static.
+of static methods is 15\%-20\% faster than dynamic invocations, the framework recommends making these methods static.
 
 * **No LowMemory Resolver (_NLMR_)**: this code smell occurs when an Activity does not implement the method onLowMemory(). 
 This method is called by the operating system when running low on memory in order to free allocated and unused memory spaces. 
@@ -16,7 +16,7 @@ If it is not implemented, the operating system may kill the process.
 * **Hashmap Usage (_HMU_)**: the usage of HashMap is inadvisable when managing small sets in Android. 
 Using Hashmaps entails the auto-boxing process where primitive types are converted into generic objects. 
 The issue is that generic objects are much larger than primitive types, 16 and 4 bytes, respectively. 
-Therefore, the framework recommends using the SparseArray data structure that is more memory-efficient.
+Therefore, the framework recommends using the SparseArray data structure, which is more memory-efficient.
 
 * **UI Overdraw (_UIO_)**: a UI Overdraw is a situation where a pixel of the screen is drawn many times in the same frame. 
 This happens when the UI design consists of unneeded overlapping layers, _e.g.,_ hidden backgrounds. 
@@ -34,9 +34,9 @@ The code smell occurs when the LRU is initialized without checking the available
 The available memory may vary considerably according to the device so it is necessary to adapt the cache size to the available memory.
 
 SmellDetector performs static analysis using [Spoon](https://github.com/INRIA/spoon), a framework for Java-based programs analysis and transformation.
-In this analysis, it builds an abstract model of the source code that contains the code entities (_e.g.,_ classes and methods), 
+It builds an abstract model of the source code that contains the entities (_e.g.,_ classes and methods), 
 properties (_e.g.,_ names, types), and metrics (_e.g.,_ number of lines, complexity).
-This model is stored in a graph database with Neo4J, which can be queried to detect the aforementioned code smells.
+This model is stored in a graph database, which can be queried to detect the aforementioned code smells.
 
 This project is part of the [Sniffer Toolkit](https://github.com/HabchiSarra/Sniffer). <br /> 
 For more details about the tool and its associated research work, you can refer to the following research papers:
